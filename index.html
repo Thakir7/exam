@@ -1,167 +1,212 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>بوابة الاستعلام عن جدول الاختبارات النهائية</title>
-  <style>
-    body{font-family:Tahoma,Arial,sans-serif;background:#f3f4f6;margin:0;padding:0}
-    .container{max-width:950px;margin:40px auto;background:#fff;padding:25px 30px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,.08)}
-    h1{margin:0;text-align:center;color:#111827;font-size:22px}
-    .search-box{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:20px 0 20px}
-    .search-box input{padding:10px 12px;font-size:16px;border-radius:10px;border:1px solid #d1d5db;min-width:240px;text-align:center}
-    .search-box button{padding:10px 18px;font-size:16px;border-radius:10px;border:none;cursor:pointer;background:#2563eb;color:#fff}
-    .search-box button:hover{background:#1d4ed8}
-    .info{margin:10px 0 15px;padding:10px 12px;border-radius:10px;background:#eff6ff;color:#1e3a8a;font-size:14px}
-    .info strong{color:#111827}
-    table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
-    th,td{border:1px solid #e5e7eb;padding:10px 8px;text-align:center;vertical-align:middle}
-    th{background:#f9fafb;font-weight:700}
-    .time{display:block;font-size:11px;color:#6b7280;margin-top:2px}
-    .course-name{font-weight:700}
-    .course-ref{font-size:11px;color:#6b7280}
-    .forbidden-cell{background:#fee2e2 !important}
-    .warn{color:#b91c1c;font-weight:700;font-size:12px;margin-top:6px}
-    .conflictCourse{color:#b91c1c;font-weight:800}
-    .no-data{margin-top:15px;padding:10px 12px;border-radius:10px;background:#fef2f2;color:#991b1b;font-size:14px;text-align:center;white-space:pre-line}
-    .footer-note{margin-top:15px;font-size:12px;color:#6b7280;text-align:left}
-    .mini{font-size:12px;color:#6b7280;text-align:center;margin-top:8px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بوابة الاستعلام عن جدول الاختبارات</title>
+
+<style>
+body{font-family:Tahoma,Arial;background:#f3f4f6;margin:0}
+.container{max-width:1100px;margin:30px auto;background:#fff;padding:25px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.08)}
+h1,h2{text-align:center;margin:0 0 15px}
+.search-box{display:flex;gap:10px;justify-content:center;margin:15px 0}
+input,button{padding:10px;border-radius:10px;border:1px solid #d1d5db;font-size:15px}
+button{cursor:pointer;background:#2563eb;color:#fff;border:none}
+button:hover{background:#1d4ed8}
+.hidden{display:none}
+.info{background:#eff6ff;padding:10px;border-radius:10px;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #e5e7eb;padding:8px;text-align:center}
+th{background:#f9fafb}
+.warn{color:#b91c1c;font-weight:bold;font-size:12px}
+.forbidden{background:#fee2e2}
+.admin-box{background:#f8fafc;border:1px dashed #cbd5f5;padding:15px;border-radius:10px;margin-top:20px}
+.admin-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
+.small{font-size:12px;color:#6b7280}
+.footer{text-align:center;font-size:12px;color:#6b7280;margin-top:15px}
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>بوابة الاستعلام عن جدول الاختبارات النهائية</h1>
+<div class="container">
 
-    <div class="search-box">
-      <input type="text" id="traineeId" placeholder="أدخل الرقم التدريبي" />
-      <button id="btn" onclick="searchTrainee()">بحث</button>
-    </div>
+<h1>بوابة الاستعلام عن جدول الاختبارات</h1>
 
-    <div id="result"></div>
-    <div class="mini" id="hint"></div>
+<!-- ========== اختيار الوضع ========== -->
+<div class="search-box">
+  <button onclick="showStudent()">وضع المتدرب</button>
+  <button onclick="showAdmin()">لوحة تحكم المدير</button>
+</div>
 
-    <div class="footer-note">
-      * البيانات تُجلب مباشرة من Google Sheet عبر Apps Script API.
-    </div>
+<!-- ========== واجهة المتدرب ========== -->
+<div id="studentView">
+  <div class="search-box">
+    <input id="traineeId" placeholder="أدخل الرقم التدريبي">
+    <button onclick="searchTrainee()">بحث</button>
+  </div>
+  <div id="result"></div>
+</div>
+
+<!-- ========== لوحة تحكم المدير ========== -->
+<div id="adminView" class="hidden">
+
+  <div class="search-box">
+    <input type="password" id="adminPass" placeholder="كلمة مرور المدير">
+    <button onclick="loginAdmin()">دخول</button>
   </div>
 
-  <script>
-    // رابط الـ API (Apps Script Web App)
-    const API_URL = "https://script.google.com/macros/s/AKfycbxGz87ofKfisrCyUNPMbCX1va-W1BrLteHABoX8kYj5nA9GGafYKrlhDl8xBTua_tym0g/exec";
+  <div id="adminPanel" class="hidden admin-box">
 
-    function esc(s){
-      return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-    }
+    <h2>لوحة تحكم المدير</h2>
 
-    function setLoading(isLoading){
-      const btn = document.getElementById("btn");
-      btn.disabled = isLoading;
-      btn.textContent = isLoading ? "جاري..." : "بحث";
-    }
+    <div class="admin-actions">
+      <div class="card">
+        <h4>اختبار الاتصال</h4>
+        <button onclick="testAPI()">اختبار API</button>
+        <div id="apiStatus" class="small"></div>
+      </div>
 
-    async function searchTrainee() {
-      const traineeId = document.getElementById("traineeId").value.trim();
-      const resultDiv = document.getElementById("result");
-      const hint = document.getElementById("hint");
-      resultDiv.innerHTML = "";
-      hint.textContent = "";
+      <div class="card">
+        <h4>بحث تجريبي</h4>
+        <input id="testId" placeholder="رقم تدريبي">
+        <button onclick="searchTest()">بحث</button>
+      </div>
 
-      if (!traineeId) return alert("من فضلك أدخل الرقم التدريبي");
+      <div class="card">
+        <h4>إعدادات الأمان</h4>
+        <div class="small">
+          ✔ محمي بـ Token<br>
+          ✔ مقيّد GitHub Pages<br>
+          ✔ Rate Limit مفعل
+        </div>
+      </div>
 
-      setLoading(true);
-      resultDiv.textContent = "جاري البحث...";
+      <div class="card">
+        <h4>ملاحظات</h4>
+        <div class="small">
+          سجلات الاستخدام محفوظة في Google Sheet (API_LOGS)
+        </div>
+      </div>
+    </div>
 
-      try {
-        const url = `${API_URL}?id=${encodeURIComponent(traineeId)}`;
-        const res = await fetch(url, { method: "GET" });
-        const data = await res.json();
+    <button style="margin-top:15px;background:#dc2626" onclick="logoutAdmin()">تسجيل خروج</button>
 
-        if (!data.ok) {
-          resultDiv.innerHTML = `<div class="no-data">${esc(data.message)}</div>`;
-          setLoading(false);
-          return;
+  </div>
+</div>
+
+<div class="footer">
+  البيانات تُجلب مباشرة من Google Sheets عبر Apps Script API
+</div>
+
+</div>
+
+<script>
+/* ===== إعدادات الاتصال ===== */
+const API_URL   = "https://script.google.com/macros/s/AKfycbxGz87ofKfisrCyUNPMbCX1va-W1BrLteHABoX8kYj5nA9GGafYKrlhDl8xBTua_tym0g/exec";
+const API_TOKEN = "SECRET_TOKEN_1447H";
+
+/* كلمة مرور لوحة المدير (واجهة فقط) */
+const ADMIN_PASSWORD = "admin@1447";
+
+/* ===== وظائف عامة ===== */
+function showStudent(){
+  document.getElementById("studentView").classList.remove("hidden");
+  document.getElementById("adminView").classList.add("hidden");
+}
+function showAdmin(){
+  document.getElementById("adminView").classList.remove("hidden");
+  document.getElementById("studentView").classList.add("hidden");
+}
+function loginAdmin(){
+  if(document.getElementById("adminPass").value === ADMIN_PASSWORD){
+    document.getElementById("adminPanel").classList.remove("hidden");
+  } else {
+    alert("كلمة المرور غير صحيحة");
+  }
+}
+function logoutAdmin(){
+  document.getElementById("adminPanel").classList.add("hidden");
+}
+
+/* ===== استدعاء API ===== */
+async function callAPI(id){
+  const res = await fetch(`${API_URL}?id=${encodeURIComponent(id)}&token=${API_TOKEN}`);
+  return await res.json();
+}
+
+/* ===== المتدرب ===== */
+async function searchTrainee(){
+  const id = document.getElementById("traineeId").value.trim();
+  if(!id) return alert("أدخل الرقم التدريبي");
+  document.getElementById("result").innerHTML = "جاري البحث...";
+  const data = await callAPI(id);
+  if(!data.ok){
+    document.getElementById("result").innerHTML = `<div class="warn">${data.message}</div>`;
+    return;
+  }
+  renderTable(data);
+}
+
+/* ===== المدير ===== */
+async function testAPI(){
+  document.getElementById("apiStatus").innerText = "جاري الاختبار...";
+  try{
+    const res = await callAPI("000");
+    document.getElementById("apiStatus").innerText = "✔ API يعمل";
+  }catch{
+    document.getElementById("apiStatus").innerText = "✖ فشل الاتصال";
+  }
+}
+function searchTest(){
+  document.getElementById("traineeId").value =
+    document.getElementById("testId").value;
+  showStudent();
+  searchTrainee();
+}
+
+/* ===== عرض الجدول ===== */
+function renderTable(data){
+  let html = `<div class="info">
+    <b>اسم المتدرب:</b> ${data.traineeName}<br>
+    <b>الرقم التدريبي:</b> ${data.traineeId}
+  </div>`;
+
+  html += `<table>
+    <tr>
+      <th>اليوم</th>
+      <th>الفترة الأولى</th>
+      <th>الفترة الثانية</th>
+      <th>الفترة الثالثة</th>
+    </tr>`;
+
+  data.days.forEach(d=>{
+    html += `<tr><td>${d.dayLabel}</td>`;
+    [1,2,3].forEach(p=>{
+      const slot = d.periods[p];
+      if(!slot || slot.length===0){
+        html += `<td>-</td>`;
+      }else{
+        const conflict = slot.length>1;
+        html += `<td class="${conflict?'forbidden':''}">`;
+        slot.forEach((c,i)=>{
+          html += `<div ${conflict && i>0?'class="warn"':''}>
+            ${c.courseName}<br>
+            <span class="small">${c.courseRef} - ${c.status}</span>
+          </div>`;
+        });
+        if(conflict){
+          html += `<div class="warn">تعارض مقررات</div>`;
         }
-
-        // معلومات المتدرب
-        let html = "";
-        html += `<div class="info">
-          <div><strong>اسم المتدرب:</strong> ${esc(data.traineeName)}</div>
-          <div><strong>الرقم التدريبي:</strong> ${esc(data.traineeId)}</div>
-        </div>`;
-
-        // جدول مثل الشكل المطلوب
-        html += `<table>
-          <thead>
-            <tr>
-              <th>اليوم</th>
-              <th>الفترة الأولى<span class="time">8:00 إلى 10:30</span></th>
-              <th>الفترة الثانية<span class="time">11:00 إلى 12:30</span></th>
-              <th>الفترة الثالثة<span class="time">12:00 إلى 12:30</span></th>
-            </tr>
-          </thead>
-          <tbody>`;
-
-        const days = Array.isArray(data.days) ? data.days : [];
-        if (days.length === 0) {
-          html += `<tr><td colspan="4">لا يوجد جدول اختبارات لهذا المتدرب.</td></tr>`;
-        } else {
-          days.forEach(dayObj => {
-            html += `<tr>`;
-            html += `<td>${esc(dayObj.dayLabel)}</td>`;
-
-            [1,2,3].forEach(p => {
-              const slot = (dayObj.periods && dayObj.periods[p]) ? dayObj.periods[p] : [];
-              if (!slot || slot.length === 0) {
-                html += `<td>-</td>`;
-                return;
-              }
-
-              const hasConflict = slot.length > 1;
-              const anyForbidden = slot.some(c => !!c.forbidden);
-
-              html += `<td class="${anyForbidden ? "forbidden-cell" : ""}">`;
-
-              slot.forEach((c, idx) => {
-                const isOther = hasConflict && idx > 0; // المادة/المواد الأخرى
-                const cls = isOther ? "conflictCourse" : "";
-
-                html += `<div class="course-name ${cls}">${esc(c.courseName)}</div>`;
-                html += `<div class="course-ref ${cls}">(${esc(c.courseRef)})</div>`;
-                html += `<div class="${cls}">${esc(c.status)}</div>`;
-
-                if (idx < slot.length - 1) {
-                  html += `<hr style="border:none;border-top:1px dashed #ccc;margin:6px 0;">`;
-                }
-              });
-
-              if (hasConflict) {
-                html += `<div class="warn">تنبيه: لديك أكثر من مقرر في نفس الفترة — تم تمييز المادة الأخرى بالأحمر</div>`;
-              }
-              if (anyForbidden) {
-                html += `<div class="warn">لا يمكن دخول الاختبار لأحد المقررات بسبب (حرمان/مطوي قيده)</div>`;
-              }
-
-              html += `</td>`;
-            });
-
-            html += `</tr>`;
-          });
-        }
-
-        html += `</tbody></table>`;
-        resultDiv.innerHTML = html;
-        hint.textContent = "إذا لم تظهر نتيجة، تأكد أن الرقم التدريبي موجود في الشيت.";
-
-      } catch (err) {
-        resultDiv.innerHTML = `<div class="no-data">حدث خطأ أثناء جلب البيانات:\n${esc(err.message || err)}</div>`;
-      } finally {
-        setLoading(false);
+        html += `</td>`;
       }
-    }
-
-    document.getElementById("traineeId").addEventListener("keyup", function(e){
-      if (e.key === "Enter") searchTrainee();
     });
-  </script>
+    html += `</tr>`;
+  });
+
+  html += `</table>`;
+  document.getElementById("result").innerHTML = html;
+}
+</script>
 </body>
 </html>
