@@ -1,212 +1,314 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>بوابة الاستعلام عن جدول الاختبارات</title>
-
 <style>
-body{font-family:Tahoma,Arial;background:#f3f4f6;margin:0}
-.container{max-width:1100px;margin:30px auto;background:#fff;padding:25px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.08)}
-h1,h2{text-align:center;margin:0 0 15px}
-.search-box{display:flex;gap:10px;justify-content:center;margin:15px 0}
-input,button{padding:10px;border-radius:10px;border:1px solid #d1d5db;font-size:15px}
-button{cursor:pointer;background:#2563eb;color:#fff;border:none}
-button:hover{background:#1d4ed8}
-.hidden{display:none}
-.info{background:#eff6ff;padding:10px;border-radius:10px;margin-bottom:10px}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border:1px solid #e5e7eb;padding:8px;text-align:center}
-th{background:#f9fafb}
-.warn{color:#b91c1c;font-weight:bold;font-size:12px}
-.forbidden{background:#fee2e2}
-.admin-box{background:#f8fafc;border:1px dashed #cbd5f5;padding:15px;border-radius:10px;margin-top:20px}
-.admin-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-.card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px}
-.small{font-size:12px;color:#6b7280}
-.footer{text-align:center;font-size:12px;color:#6b7280;margin-top:15px}
+  body{font-family:Tahoma,Arial;background:#f3f4f6;margin:0}
+  .container{max-width:1100px;margin:28px auto;background:#fff;padding:22px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.08)}
+  h1,h2{margin:0 0 14px;text-align:center;color:#111827}
+  .tabs{display:flex;gap:10px;justify-content:center;margin:10px 0 18px}
+  .tabs button{padding:10px 14px;border-radius:10px;border:1px solid #d1d5db;background:#fff;cursor:pointer}
+  .tabs button.active{background:#2563eb;color:#fff;border-color:#2563eb}
+  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+  input,button{padding:10px 12px;border-radius:10px;border:1px solid #d1d5db;font-size:15px}
+  button.primary{background:#2563eb;color:#fff;border:none;cursor:pointer}
+  button.primary:hover{background:#1d4ed8}
+  button.danger{background:#dc2626;color:#fff;border:none;cursor:pointer}
+  button.danger:hover{background:#b91c1c}
+  .panel{display:none}
+  .panel.active{display:block}
+  .info{background:#eff6ff;padding:10px 12px;border-radius:10px;color:#1e3a8a;font-size:14px;margin-top:10px}
+  .no-data{background:#fef2f2;color:#991b1b;padding:10px 12px;border-radius:10px;white-space:pre-line}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
+  th,td{border:1px solid #e5e7eb;padding:8px;text-align:center;vertical-align:middle}
+  th{background:#f9fafb;font-weight:700}
+  .time{display:block;font-size:11px;color:#6b7280;margin-top:2px}
+  .forbidden{background:#fee2e2}
+  .warn{color:#b91c1c;font-weight:800;font-size:12px;margin-top:6px}
+  .small{font-size:12px;color:#6b7280}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px}
+  .card{border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fff}
+  .logtable td{font-size:12px}
+  .footer{text-align:center;color:#6b7280;font-size:12px;margin-top:14px}
 </style>
 </head>
-
 <body>
 <div class="container">
+  <h1>بوابة الاستعلام عن جدول الاختبارات</h1>
 
-<h1>بوابة الاستعلام عن جدول الاختبارات</h1>
-
-<!-- ========== اختيار الوضع ========== -->
-<div class="search-box">
-  <button onclick="showStudent()">وضع المتدرب</button>
-  <button onclick="showAdmin()">لوحة تحكم المدير</button>
-</div>
-
-<!-- ========== واجهة المتدرب ========== -->
-<div id="studentView">
-  <div class="search-box">
-    <input id="traineeId" placeholder="أدخل الرقم التدريبي">
-    <button onclick="searchTrainee()">بحث</button>
-  </div>
-  <div id="result"></div>
-</div>
-
-<!-- ========== لوحة تحكم المدير ========== -->
-<div id="adminView" class="hidden">
-
-  <div class="search-box">
-    <input type="password" id="adminPass" placeholder="كلمة مرور المدير">
-    <button onclick="loginAdmin()">دخول</button>
+  <div class="tabs">
+    <button id="tabStudent" class="active" onclick="setTab('student')">وضع المتدرب</button>
+    <button id="tabAdmin" onclick="setTab('admin')">لوحة تحكم المدير</button>
   </div>
 
-  <div id="adminPanel" class="hidden admin-box">
+  <!-- =================== Student Panel =================== -->
+  <div id="panelStudent" class="panel active">
+    <div class="row">
+      <input id="traineeId" placeholder="أدخل الرقم التدريبي" />
+      <button class="primary" onclick="searchTrainee()">بحث</button>
+    </div>
+    <div id="studentResult"></div>
+  </div>
 
-    <h2>لوحة تحكم المدير</h2>
-
-    <div class="admin-actions">
-      <div class="card">
-        <h4>اختبار الاتصال</h4>
-        <button onclick="testAPI()">اختبار API</button>
-        <div id="apiStatus" class="small"></div>
+  <!-- =================== Admin Panel =================== -->
+  <div id="panelAdmin" class="panel">
+    <div id="adminLogin">
+      <div class="row">
+        <input type="password" id="adminPass" placeholder="كلمة مرور المدير" />
+        <button class="primary" onclick="adminLogin()">دخول</button>
       </div>
-
-      <div class="card">
-        <h4>بحث تجريبي</h4>
-        <input id="testId" placeholder="رقم تدريبي">
-        <button onclick="searchTest()">بحث</button>
-      </div>
-
-      <div class="card">
-        <h4>إعدادات الأمان</h4>
-        <div class="small">
-          ✔ محمي بـ Token<br>
-          ✔ مقيّد GitHub Pages<br>
-          ✔ Rate Limit مفعل
-        </div>
-      </div>
-
-      <div class="card">
-        <h4>ملاحظات</h4>
-        <div class="small">
-          سجلات الاستخدام محفوظة في Google Sheet (API_LOGS)
-        </div>
-      </div>
+      <div class="small" style="text-align:center">* كلمة المرور محلية داخل الصفحة (يمكن تغييرها)</div>
     </div>
 
-    <button style="margin-top:15px;background:#dc2626" onclick="logoutAdmin()">تسجيل خروج</button>
+    <div id="adminArea" style="display:none">
+      <h2>لوحة تحكم المدير</h2>
 
+      <div class="cards">
+        <div class="card">
+          <div style="font-weight:700;margin-bottom:6px">اختبار الاتصال</div>
+          <button class="primary" onclick="testAPI()">اختبار API</button>
+          <div id="apiStatus" class="small" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight:700;margin-bottom:6px">إحصائيات السجلات</div>
+          <div id="statsBox" class="small">اضغط "تحديث السجلات"</div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight:700;margin-bottom:6px">تحديث السجلات</div>
+          <div class="row" style="justify-content:flex-start">
+            <input id="logLimit" value="50" style="width:110px" />
+            <button class="primary" onclick="loadLogs()">تحديث</button>
+          </div>
+          <div class="small">حد أقصى 200 سجل</div>
+        </div>
+
+        <div class="card">
+          <div style="font-weight:700;margin-bottom:6px">خروج</div>
+          <button class="danger" onclick="adminLogout()">تسجيل خروج</button>
+        </div>
+      </div>
+
+      <div id="logsArea" style="margin-top:12px"></div>
+    </div>
   </div>
-</div>
 
-<div class="footer">
-  البيانات تُجلب مباشرة من Google Sheets عبر Apps Script API
-</div>
-
+  <div class="footer">البيانات تُجلب من Google Sheets عبر Apps Script API (محمي بـ Origin + Token + Rate limit)</div>
 </div>
 
 <script>
-/* ===== إعدادات الاتصال ===== */
+/* ====== إعدادات ====== */
 const API_URL   = "https://script.google.com/macros/s/AKfycbxGz87ofKfisrCyUNPMbCX1va-W1BrLteHABoX8kYj5nA9GGafYKrlhDl8xBTua_tym0g/exec";
 const API_TOKEN = "SECRET_TOKEN_1447H";
 
-/* كلمة مرور لوحة المدير (واجهة فقط) */
+/* كلمة مرور لوحة المدير (غيّرها) */
 const ADMIN_PASSWORD = "admin@1447";
 
-/* ===== وظائف عامة ===== */
-function showStudent(){
-  document.getElementById("studentView").classList.remove("hidden");
-  document.getElementById("adminView").classList.add("hidden");
-}
-function showAdmin(){
-  document.getElementById("adminView").classList.remove("hidden");
-  document.getElementById("studentView").classList.add("hidden");
-}
-function loginAdmin(){
-  if(document.getElementById("adminPass").value === ADMIN_PASSWORD){
-    document.getElementById("adminPanel").classList.remove("hidden");
-  } else {
-    alert("كلمة المرور غير صحيحة");
-  }
-}
-function logoutAdmin(){
-  document.getElementById("adminPanel").classList.add("hidden");
+/* ====== Helpers ====== */
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-/* ===== استدعاء API ===== */
-async function callAPI(id){
-  const res = await fetch(`${API_URL}?id=${encodeURIComponent(id)}&token=${API_TOKEN}`);
+function setTab(tab){
+  document.getElementById("tabStudent").classList.toggle("active", tab==="student");
+  document.getElementById("tabAdmin").classList.toggle("active", tab==="admin");
+  document.getElementById("panelStudent").classList.toggle("active", tab==="student");
+  document.getElementById("panelAdmin").classList.toggle("active", tab==="admin");
+}
+
+/* ====== API Calls ====== */
+async function callSchedule(id){
+  const url = `${API_URL}?id=${encodeURIComponent(id)}&token=${encodeURIComponent(API_TOKEN)}`;
+  const res = await fetch(url);
   return await res.json();
 }
 
-/* ===== المتدرب ===== */
+async function callLogs(limit){
+  const url = `${API_URL}?action=logs&limit=${encodeURIComponent(limit)}&token=${encodeURIComponent(API_TOKEN)}`;
+  const res = await fetch(url);
+  return await res.json();
+}
+
+/* ====== Student ====== */
 async function searchTrainee(){
   const id = document.getElementById("traineeId").value.trim();
-  if(!id) return alert("أدخل الرقم التدريبي");
-  document.getElementById("result").innerHTML = "جاري البحث...";
-  const data = await callAPI(id);
-  if(!data.ok){
-    document.getElementById("result").innerHTML = `<div class="warn">${data.message}</div>`;
+  const box = document.getElementById("studentResult");
+  box.innerHTML = "جاري البحث...";
+
+  if(!id){
+    box.innerHTML = `<div class="no-data">من فضلك أدخل الرقم التدريبي</div>`;
     return;
   }
-  renderTable(data);
-}
 
-/* ===== المدير ===== */
-async function testAPI(){
-  document.getElementById("apiStatus").innerText = "جاري الاختبار...";
   try{
-    const res = await callAPI("000");
-    document.getElementById("apiStatus").innerText = "✔ API يعمل";
-  }catch{
-    document.getElementById("apiStatus").innerText = "✖ فشل الاتصال";
+    const data = await callSchedule(id);
+    if(!data.ok){
+      box.innerHTML = `<div class="no-data">${esc(data.message)}</div>`;
+      return;
+    }
+    box.innerHTML = renderScheduleTable(data);
+  }catch(err){
+    box.innerHTML = `<div class="no-data">فشل الاتصال بالخادم (Failed to fetch). تأكد من تحديث النشر في Apps Script.</div>`;
   }
 }
-function searchTest(){
-  document.getElementById("traineeId").value =
-    document.getElementById("testId").value;
-  showStudent();
-  searchTrainee();
-}
 
-/* ===== عرض الجدول ===== */
-function renderTable(data){
-  let html = `<div class="info">
-    <b>اسم المتدرب:</b> ${data.traineeName}<br>
-    <b>الرقم التدريبي:</b> ${data.traineeId}
-  </div>`;
+function renderScheduleTable(data){
+  let html = `
+    <div class="info">
+      <div><strong>اسم المتدرب:</strong> ${esc(data.traineeName)}</div>
+      <div><strong>الرقم التدريبي:</strong> ${esc(data.traineeId)}</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>اليوم</th>
+          <th>الفترة الأولى<span class="time">8:00 إلى 10:30</span></th>
+          <th>الفترة الثانية<span class="time">11:00 إلى 12:30</span></th>
+          <th>الفترة الثالثة<span class="time">12:00 إلى 12:30</span></th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
 
-  html += `<table>
-    <tr>
-      <th>اليوم</th>
-      <th>الفترة الأولى</th>
-      <th>الفترة الثانية</th>
-      <th>الفترة الثالثة</th>
-    </tr>`;
+  const days = Array.isArray(data.days) ? data.days : [];
+  if(days.length === 0){
+    html += `<tr><td colspan="4">لا يوجد جدول اختبارات لهذا المتدرب.</td></tr>`;
+  }else{
+    days.forEach(d=>{
+      html += `<tr><td>${esc(d.dayLabel)}</td>`;
+      [1,2,3].forEach(p=>{
+        const slot = d.periods && d.periods[p] ? d.periods[p] : [];
+        if(!slot || slot.length===0){
+          html += `<td>-</td>`;
+        }else{
+          const hasConflict = slot.length > 1;
+          const anyForbidden = slot.some(c => !!c.forbidden);
+          html += `<td class="${anyForbidden ? 'forbidden' : ''}">`;
 
-  data.days.forEach(d=>{
-    html += `<tr><td>${d.dayLabel}</td>`;
-    [1,2,3].forEach(p=>{
-      const slot = d.periods[p];
-      if(!slot || slot.length===0){
-        html += `<td>-</td>`;
-      }else{
-        const conflict = slot.length>1;
-        html += `<td class="${conflict?'forbidden':''}">`;
-        slot.forEach((c,i)=>{
-          html += `<div ${conflict && i>0?'class="warn"':''}>
-            ${c.courseName}<br>
-            <span class="small">${c.courseRef} - ${c.status}</span>
-          </div>`;
-        });
-        if(conflict){
-          html += `<div class="warn">تعارض مقررات</div>`;
+          slot.forEach((c,idx)=>{
+            const isOther = hasConflict && idx>0;
+            const cls = isOther ? 'warn' : '';
+            html += `
+              <div class="${cls}">
+                <div style="font-weight:700">${esc(c.courseName)}</div>
+                <div class="small">(${esc(c.courseRef)}) - ${esc(c.status)}</div>
+              </div>
+            `;
+            if(idx < slot.length-1){
+              html += `<hr style="border:none;border-top:1px dashed #ccc;margin:6px 0;">`;
+            }
+          });
+
+          if(hasConflict) html += `<div class="warn">تنبيه: لديك أكثر من مقرر في نفس الفترة — تم تمييز المادة الأخرى بالأحمر</div>`;
+          if(anyForbidden) html += `<div class="warn">لا يمكن دخول الاختبار لأحد المقررات بسبب (حرمان/مطوي قيده)</div>`;
+          html += `</td>`;
         }
-        html += `</td>`;
-      }
+      });
+      html += `</tr>`;
     });
-    html += `</tr>`;
-  });
+  }
 
-  html += `</table>`;
-  document.getElementById("result").innerHTML = html;
+  html += `</tbody></table>`;
+  return html;
 }
+
+/* ====== Admin ====== */
+function adminLogin(){
+  const pass = document.getElementById("adminPass").value;
+  if(pass !== ADMIN_PASSWORD){
+    alert("كلمة المرور غير صحيحة");
+    return;
+  }
+  document.getElementById("adminLogin").style.display = "none";
+  document.getElementById("adminArea").style.display = "block";
+  document.getElementById("logsArea").innerHTML = `<div class="small">جاهز. اضغط "تحديث" لجلب السجلات.</div>`;
+}
+
+function adminLogout(){
+  document.getElementById("adminPass").value = "";
+  document.getElementById("adminLogin").style.display = "block";
+  document.getElementById("adminArea").style.display = "none";
+  document.getElementById("apiStatus").innerText = "";
+  document.getElementById("statsBox").innerText = "اضغط \"تحديث السجلات\"";
+  document.getElementById("logsArea").innerHTML = "";
+}
+
+async function testAPI(){
+  const box = document.getElementById("apiStatus");
+  box.innerText = "جاري الاختبار...";
+  try{
+    // طلب logs بحد 1 لتأكيد الاتصال والصلاحيات
+    const data = await callLogs(1);
+    if(data && data.ok) box.innerText = "✔ الاتصال يعمل + الصلاحيات سليمة";
+    else box.innerText = "✖ فشل: " + (data.message || "Unknown");
+  }catch(err){
+    box.innerText = "✖ فشل الاتصال (Failed to fetch)";
+  }
+}
+
+async function loadLogs(){
+  const area = document.getElementById("logsArea");
+  const statsBox = document.getElementById("statsBox");
+
+  let limit = parseInt(document.getElementById("logLimit").value, 10);
+  if(isNaN(limit) || limit<1) limit = 50;
+  if(limit>200) limit = 200;
+
+  area.innerHTML = "جاري تحميل السجلات...";
+  try{
+    const data = await callLogs(limit);
+    if(!data.ok){
+      area.innerHTML = `<div class="no-data">${esc(data.message || "فشل تحميل السجلات")}</div>`;
+      return;
+    }
+
+    // إحصائيات
+    if(data.stats){
+      statsBox.innerHTML = `
+        إجمالي السجلات: <b>${data.stats.total}</b><br>
+        OK: <b>${data.stats.ok}</b> — NOT_FOUND: <b>${data.stats.notFound}</b><br>
+        DENY_ORIGIN: <b>${data.stats.denyOrigin}</b> — DENY_TOKEN: <b>${data.stats.denyToken}</b><br>
+        DENY_RATE: <b>${data.stats.denyRate}</b> — BAD_REQUEST: <b>${data.stats.badRequest}</b>
+      `;
+    }else{
+      statsBox.innerText = "لا توجد إحصائيات";
+    }
+
+    // جدول السجلات
+    const headers = data.headers || [];
+    const rows = data.rows || [];
+
+    let html = `<table class="logtable"><thead><tr>`;
+    headers.forEach(h => html += `<th>${esc(h)}</th>`);
+    html += `</tr></thead><tbody>`;
+
+    if(rows.length === 0){
+      html += `<tr><td colspan="${headers.length || 6}">لا توجد سجلات.</td></tr>`;
+    }else{
+      rows.slice().reverse().forEach(r => { // الأحدث أولاً
+        html += `<tr>`;
+        for(let i=0;i<headers.length;i++){
+          html += `<td>${esc(r[i])}</td>`;
+        }
+        html += `</tr>`;
+      });
+    }
+
+    html += `</tbody></table>`;
+    area.innerHTML = html;
+
+  }catch(err){
+    area.innerHTML = `<div class="no-data">فشل تحميل السجلات (Failed to fetch). تأكد من تحديث النشر في Apps Script.</div>`;
+  }
+}
+
+/* Enter للبحث */
+document.getElementById("traineeId").addEventListener("keyup", function(e){
+  if(e.key === "Enter") searchTrainee();
+});
 </script>
 </body>
 </html>
