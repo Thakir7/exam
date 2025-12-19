@@ -96,20 +96,23 @@
     </div>
   </div>
 
-  <div class="footer">البيانات تُجلب من Google Sheets عبر Apps Script API (محمي بـ Origin + Token + Rate limit)</div>
+  <div class="footer">البيانات تُجلب من Google Sheets عبر Apps Script API (JSONP + Token + Rate limit + Logs)</div>
 </div>
 
 <script>
 /* ====== إعدادات ====== */
-const API_URL   = "https://script.google.com/macros/s/AKfycbxvWEHcpSJoW1A9PYcCJiELvdRo5cOiFMVyGDAyDqJT0wwqi0EOWlDaUG1wI9urKEf4ug/exec";
-const API_TOKEN = "SECRET_TOKEN_1447H";
+var API_URL   = "https://script.google.com/macros/s/AKfycbxvWEHcpSJoW1A9PYcCJiELvdRo5cOiFMVyGDAyDqJT0wwqi0EOWlDaUG1wI9urKEf4ug/exec";
+var API_TOKEN = "SECRET_TOKEN_1447H";
 
 /* كلمة مرور لوحة المدير (غيّرها) */
-const ADMIN_PASSWORD = "admin@1447";
+var ADMIN_PASSWORD = "admin@1447";
 
-/* ====== Helpers ====== */
+/* ====== Helpers (توافق عالي) ====== */
 function esc(s){
-  return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  s = (s === null || s === undefined) ? "" : String(s);
+  return s.replace(/[&<>"']/g, function(m){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
+  });
 }
 
 function setTab(tab){
@@ -119,112 +122,153 @@ function setTab(tab){
   document.getElementById("panelAdmin").classList.toggle("active", tab==="admin");
 }
 
-/* ====== API Calls ====== */
-async function callSchedule(id){
-  const url = `${API_URL}?id=${encodeURIComponent(id)}&token=${encodeURIComponent(API_TOKEN)}`;
-  const res = await fetch(url);
-  return await res.json();
+/* ====== JSONP (بدون CORS) ====== */
+function jsonp(url){
+  return new Promise(function(resolve, reject){
+    var cbName = "cb_" + Math.random().toString(36).slice(2);
+    var script = document.createElement("script");
+
+    var timeout = setTimeout(function(){
+      cleanup();
+      reject(new Error("JSONP timeout"));
+    }, 15000);
+
+    function cleanup(){
+      clearTimeout(timeout);
+      try { delete window[cbName]; } catch(e){ window[cbName] = undefined; }
+      if(script && script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[cbName] = function(data){
+      cleanup();
+      resolve(data);
+    };
+
+    script.onerror = function(){
+      cleanup();
+      reject(new Error("JSONP script error"));
+    };
+
+    var join = (url.indexOf("?") >= 0) ? "&" : "?";
+    script.src = url + join + "callback=" + encodeURIComponent(cbName);
+    document.body.appendChild(script);
+  });
 }
 
-async function callLogs(limit){
-  const url = `${API_URL}?action=logs&limit=${encodeURIComponent(limit)}&token=${encodeURIComponent(API_TOKEN)}`;
-  const res = await fetch(url);
-  return await res.json();
+function callSchedule(id){
+  var url = API_URL + "?id=" + encodeURIComponent(id) +
+            "&token=" + encodeURIComponent(API_TOKEN);
+  return jsonp(url);
+}
+
+function callLogs(limit){
+  var url = API_URL + "?action=logs&limit=" + encodeURIComponent(limit) +
+            "&token=" + encodeURIComponent(API_TOKEN);
+  return jsonp(url);
 }
 
 /* ====== Student ====== */
 async function searchTrainee(){
-  const id = document.getElementById("traineeId").value.trim();
-  const box = document.getElementById("studentResult");
+  var id = document.getElementById("traineeId").value.trim();
+  var box = document.getElementById("studentResult");
   box.innerHTML = "جاري البحث...";
 
   if(!id){
-    box.innerHTML = `<div class="no-data">من فضلك أدخل الرقم التدريبي</div>`;
+    box.innerHTML = '<div class="no-data">من فضلك أدخل الرقم التدريبي</div>';
     return;
   }
 
   try{
-    const data = await callSchedule(id);
+    var data = await callSchedule(id);
     if(!data.ok){
-      box.innerHTML = `<div class="no-data">${esc(data.message)}</div>`;
+      box.innerHTML = '<div class="no-data">' + esc(data.message) + '</div>';
       return;
     }
     box.innerHTML = renderScheduleTable(data);
   }catch(err){
-    box.innerHTML = `<div class="no-data">فشل الاتصال بالخادم (Failed to fetch). تأكد من تحديث النشر في Apps Script.</div>`;
+    box.innerHTML = '<div class="no-data">فشل الاتصال. تأكد من تحديث نشر Apps Script (Deploy → Update).</div>';
   }
 }
 
 function renderScheduleTable(data){
-  let html = `
-    <div class="info">
-      <div><strong>اسم المتدرب:</strong> ${esc(data.traineeName)}</div>
-      <div><strong>الرقم التدريبي:</strong> ${esc(data.traineeId)}</div>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>اليوم</th>
-          <th>الفترة الأولى<span class="time">8:00 إلى 10:30</span></th>
-          <th>الفترة الثانية<span class="time">11:00 إلى 12:30</span></th>
-          <th>الفترة الثالثة<span class="time">12:00 إلى 12:30</span></th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
+  var html = ''
+    + '<div class="info">'
+    +   '<div><strong>اسم المتدرب:</strong> ' + esc(data.traineeName) + '</div>'
+    +   '<div><strong>الرقم التدريبي:</strong> ' + esc(data.traineeId) + '</div>'
+    + '</div>'
+    + '<table>'
+    + '<thead><tr>'
+    +   '<th>اليوم</th>'
+    +   '<th>الفترة الأولى<span class="time">8:00 إلى 10:30</span></th>'
+    +   '<th>الفترة الثانية<span class="time">11:00 إلى 12:30</span></th>'
+    +   '<th>الفترة الثالثة<span class="time">12:00 إلى 12:30</span></th>'
+    + '</tr></thead><tbody>';
 
-  const days = Array.isArray(data.days) ? data.days : [];
+  var days = (data.days && data.days.length) ? data.days : [];
   if(days.length === 0){
-    html += `<tr><td colspan="4">لا يوجد جدول اختبارات لهذا المتدرب.</td></tr>`;
-  }else{
-    days.forEach(d=>{
-      html += `<tr><td>${esc(d.dayLabel)}</td>`;
-      [1,2,3].forEach(p=>{
-        const slot = d.periods && d.periods[p] ? d.periods[p] : [];
-        if(!slot || slot.length===0){
-          html += `<td>-</td>`;
-        }else{
-          const hasConflict = slot.length > 1;
-          const anyForbidden = slot.some(c => !!c.forbidden);
-          html += `<td class="${anyForbidden ? 'forbidden' : ''}">`;
+    html += '<tr><td colspan="4">لا يوجد جدول اختبارات لهذا المتدرب.</td></tr>';
+  } else {
+    for(var di=0; di<days.length; di++){
+      var d = days[di];
+      html += '<tr><td>' + esc(d.dayLabel) + '</td>';
 
-          slot.forEach((c,idx)=>{
-            const isOther = hasConflict && idx>0;
-            const cls = isOther ? 'warn' : '';
-            html += `
-              <div class="${cls}">
-                <div style="font-weight:700">${esc(c.courseName)}</div>
-                <div class="small">(${esc(c.courseRef)}) - ${esc(c.status)}</div>
-              </div>
-            `;
-            if(idx < slot.length-1){
-              html += `<hr style="border:none;border-top:1px dashed #ccc;margin:6px 0;">`;
+      for(var p=1; p<=3; p++){
+        var slot = (d.periods && d.periods[p]) ? d.periods[p] : [];
+        if(!slot || slot.length === 0){
+          html += '<td>-</td>';
+        } else {
+          var hasConflict = slot.length > 1;
+          var anyForbidden = false;
+          for(var si=0; si<slot.length; si++){
+            if(slot[si] && slot[si].forbidden) { anyForbidden = true; break; }
+          }
+
+          html += '<td class="' + (anyForbidden ? 'forbidden' : '') + '">';
+
+          for(var idx=0; idx<slot.length; idx++){
+            var c = slot[idx];
+            var isOther = hasConflict && idx > 0;
+            var cls = isOther ? 'warn' : '';
+
+            html += '<div class="' + cls + '">'
+                 +   '<div style="font-weight:700">' + esc(c.courseName) + '</div>'
+                 +   '<div class="small">(' + esc(c.courseRef) + ') - ' + esc(c.status) + '</div>'
+                 + '</div>';
+
+            if(idx < slot.length - 1){
+              html += '<hr style="border:none;border-top:1px dashed #ccc;margin:6px 0;">';
             }
-          });
+          }
 
-          if(hasConflict) html += `<div class="warn">تنبيه: لديك أكثر من مقرر في نفس الفترة — تم تمييز المادة الأخرى بالأحمر</div>`;
-          if(anyForbidden) html += `<div class="warn">لا يمكن دخول الاختبار لأحد المقررات بسبب (حرمان/مطوي قيده)</div>`;
-          html += `</td>`;
+          if(hasConflict){
+            html += '<div class="warn">تنبيه: لديك أكثر من مقرر في نفس الفترة — تم تمييز المادة الأخرى بالأحمر</div>';
+          }
+          if(anyForbidden){
+            html += '<div class="warn">لا يمكن دخول الاختبار لأحد المقررات بسبب (حرمان/مطوي قيده)</div>';
+          }
+
+          html += '</td>';
         }
-      });
-      html += `</tr>`;
-    });
+      }
+
+      html += '</tr>';
+    }
   }
 
-  html += `</tbody></table>`;
+  html += '</tbody></table>';
   return html;
 }
 
 /* ====== Admin ====== */
 function adminLogin(){
-  const pass = document.getElementById("adminPass").value;
+  var pass = document.getElementById("adminPass").value;
   if(pass !== ADMIN_PASSWORD){
     alert("كلمة المرور غير صحيحة");
     return;
   }
   document.getElementById("adminLogin").style.display = "none";
   document.getElementById("adminArea").style.display = "block";
-  document.getElementById("logsArea").innerHTML = `<div class="small">جاهز. اضغط "تحديث" لجلب السجلات.</div>`;
+  document.getElementById("logsArea").innerHTML = '<div class="small">جاهز. اضغط "تحديث" لجلب السجلات.</div>';
 }
 
 function adminLogout(){
@@ -232,76 +276,75 @@ function adminLogout(){
   document.getElementById("adminLogin").style.display = "block";
   document.getElementById("adminArea").style.display = "none";
   document.getElementById("apiStatus").innerText = "";
-  document.getElementById("statsBox").innerText = "اضغط \"تحديث السجلات\"";
+  document.getElementById("statsBox").innerText = 'اضغط "تحديث السجلات"';
   document.getElementById("logsArea").innerHTML = "";
 }
 
 async function testAPI(){
-  const box = document.getElementById("apiStatus");
+  var box = document.getElementById("apiStatus");
   box.innerText = "جاري الاختبار...";
   try{
-    // طلب logs بحد 1 لتأكيد الاتصال والصلاحيات
-    const data = await callLogs(1);
+    var data = await callLogs(1);
     if(data && data.ok) box.innerText = "✔ الاتصال يعمل + الصلاحيات سليمة";
     else box.innerText = "✖ فشل: " + (data.message || "Unknown");
   }catch(err){
-    box.innerText = "✖ فشل الاتصال (Failed to fetch)";
+    box.innerText = "✖ فشل الاتصال";
   }
 }
 
 async function loadLogs(){
-  const area = document.getElementById("logsArea");
-  const statsBox = document.getElementById("statsBox");
+  var area = document.getElementById("logsArea");
+  var statsBox = document.getElementById("statsBox");
 
-  let limit = parseInt(document.getElementById("logLimit").value, 10);
-  if(isNaN(limit) || limit<1) limit = 50;
-  if(limit>200) limit = 200;
+  var limit = parseInt(document.getElementById("logLimit").value, 10);
+  if(isNaN(limit) || limit < 1) limit = 50;
+  if(limit > 200) limit = 200;
 
   area.innerHTML = "جاري تحميل السجلات...";
   try{
-    const data = await callLogs(limit);
+    var data = await callLogs(limit);
     if(!data.ok){
-      area.innerHTML = `<div class="no-data">${esc(data.message || "فشل تحميل السجلات")}</div>`;
+      area.innerHTML = '<div class="no-data">' + esc(data.message || "فشل تحميل السجلات") + '</div>';
       return;
     }
 
-    // إحصائيات
     if(data.stats){
-      statsBox.innerHTML = `
-        إجمالي السجلات: <b>${data.stats.total}</b><br>
-        OK: <b>${data.stats.ok}</b> — NOT_FOUND: <b>${data.stats.notFound}</b><br>
-        DENY_ORIGIN: <b>${data.stats.denyOrigin}</b> — DENY_TOKEN: <b>${data.stats.denyToken}</b><br>
-        DENY_RATE: <b>${data.stats.denyRate}</b> — BAD_REQUEST: <b>${data.stats.badRequest}</b>
-      `;
-    }else{
+      statsBox.innerHTML =
+        'إجمالي السجلات: <b>' + esc(data.stats.total) + '</b><br>' +
+        'OK: <b>' + esc(data.stats.ok) + '</b> — NOT_FOUND: <b>' + esc(data.stats.notFound) + '</b><br>' +
+        'DENY_ORIGIN: <b>' + esc(data.stats.denyOrigin) + '</b> — DENY_TOKEN: <b>' + esc(data.stats.denyToken) + '</b><br>' +
+        'DENY_RATE: <b>' + esc(data.stats.denyRate) + '</b> — BAD_REQUEST: <b>' + esc(data.stats.badRequest) + '</b>';
+    } else {
       statsBox.innerText = "لا توجد إحصائيات";
     }
 
-    // جدول السجلات
-    const headers = data.headers || [];
-    const rows = data.rows || [];
+    var headers = data.headers || [];
+    var rows = data.rows || [];
 
-    let html = `<table class="logtable"><thead><tr>`;
-    headers.forEach(h => html += `<th>${esc(h)}</th>`);
-    html += `</tr></thead><tbody>`;
+    var html = '<table class="logtable"><thead><tr>';
+    for(var i=0; i<headers.length; i++){
+      html += '<th>' + esc(headers[i]) + '</th>';
+    }
+    html += '</tr></thead><tbody>';
 
     if(rows.length === 0){
-      html += `<tr><td colspan="${headers.length || 6}">لا توجد سجلات.</td></tr>`;
-    }else{
-      rows.slice().reverse().forEach(r => { // الأحدث أولاً
-        html += `<tr>`;
-        for(let i=0;i<headers.length;i++){
-          html += `<td>${esc(r[i])}</td>`;
+      html += '<tr><td colspan="' + (headers.length || 6) + '">لا توجد سجلات.</td></tr>';
+    } else {
+      // الأحدث أولاً
+      for(var r=rows.length-1; r>=0; r--){
+        html += '<tr>';
+        for(var c=0; c<headers.length; c++){
+          html += '<td>' + esc(rows[r][c]) + '</td>';
         }
-        html += `</tr>`;
-      });
+        html += '</tr>';
+      }
     }
 
-    html += `</tbody></table>`;
+    html += '</tbody></table>';
     area.innerHTML = html;
 
   }catch(err){
-    area.innerHTML = `<div class="no-data">فشل تحميل السجلات (Failed to fetch). تأكد من تحديث النشر في Apps Script.</div>`;
+    area.innerHTML = '<div class="no-data">فشل تحميل السجلات. تأكد من Deploy → Update في Apps Script.</div>';
   }
 }
 
