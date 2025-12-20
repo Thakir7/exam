@@ -7,19 +7,21 @@
 
 <style>
   :root{
-    --bg:#0b1220;
-    --card:#0f172a;
-    --card2:#111c35;
-    --line:rgba(255,255,255,.08);
-    --txt:#e5e7eb;
-    --muted:#a7b0c0;
-    --brand:#3b82f6;
+    /* Light Theme */
+    --bg:#f6f8fc;
+    --bg2:#ffffff;
+    --card:#ffffff;
+    --card2:#fbfcff;
+    --line:#e6eaf2;
+    --txt:#0f172a;
+    --muted:#64748b;
+    --brand:#2563eb;
     --brand2:#60a5fa;
-    --ok:#22c55e;
+    --ok:#16a34a;
     --warn:#f59e0b;
-    --danger:#ef4444;
-    --chip:#0b2446;
-    --shadow:0 18px 40px rgba(0,0,0,.35);
+    --danger:#dc2626;
+
+    --shadow:0 16px 40px rgba(15,23,42,.10);
     --radius:18px;
   }
 
@@ -27,61 +29,74 @@
   body{
     margin:0;
     font-family:Tahoma,Arial;
-    background:
-      radial-gradient(1200px 600px at 80% -10%, rgba(96,165,250,.25), transparent 60%),
-      radial-gradient(900px 500px at 10% 0%, rgba(59,130,246,.18), transparent 55%),
-      linear-gradient(180deg, #050813, #0b1220 55%, #050813);
     color:var(--txt);
+    background:
+      radial-gradient(900px 500px at 15% 0%, rgba(96,165,250,.22), transparent 60%),
+      radial-gradient(1000px 600px at 90% -10%, rgba(37,99,235,.14), transparent 55%),
+      linear-gradient(180deg, #f8fafc, #f6f8fc 55%, #f8fafc);
   }
 
-  .wrap{max-width:1120px;margin:28px auto;padding:0 16px}
+  .wrap{max-width:1120px;margin:26px auto;padding:0 16px}
 
   /* Header */
   .header{
     display:flex;align-items:center;justify-content:space-between;gap:14px;
-    padding:18px 18px;
+    padding:16px 18px;
     border:1px solid var(--line);
     border-radius:var(--radius);
-    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.72));
     box-shadow:var(--shadow);
-    overflow:hidden;
-    position:relative;
-  }
-  .header::after{
-    content:"";
-    position:absolute;inset:auto -30% -120% -30%;
-    height:240px;
-    background:radial-gradient(circle at 50% 10%, rgba(96,165,250,.35), transparent 65%);
-    filter:blur(0px);
-    pointer-events:none;
   }
   .brand{
     display:flex;align-items:center;gap:12px;
+    min-width:0;
   }
-  .logo{
-    width:46px;height:46px;border-radius:14px;
-    background:linear-gradient(135deg, rgba(59,130,246,.9), rgba(96,165,250,.55));
-    box-shadow:0 10px 20px rgba(59,130,246,.18);
-    display:grid;place-items:center;
-    border:1px solid rgba(255,255,255,.12);
+  .logoBox{
+    width:56px;height:56px;border-radius:16px;
+    background:linear-gradient(135deg, rgba(37,99,235,.10), rgba(96,165,250,.08));
+    border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+    flex:0 0 auto;
   }
-  .logo svg{width:26px;height:26px}
+  .logoBox img{
+    width:46px;height:46px;object-fit:contain;
+  }
   .title{
-    display:flex;flex-direction:column;gap:2px
+    display:flex;flex-direction:column;gap:2px;
+    min-width:0;
   }
-  .title h1{margin:0;font-size:16px;font-weight:700;letter-spacing:.2px}
-  .title p{margin:0;font-size:12px;color:var(--muted)}
+  .title h1{
+    margin:0;
+    font-size:16px;
+    font-weight:800;
+    letter-spacing:.2px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .title .sub{
+    margin:0;
+    font-size:12px;
+    color:var(--muted);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
   .chips{
     display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;
   }
   .chip{
-    font-size:12px;color:var(--txt);
-    padding:8px 10px;border-radius:999px;
-    background:rgba(255,255,255,.05);
-    border:1px solid var(--line);
-    backdrop-filter: blur(6px);
+    font-size:12px;
+    padding:8px 10px;
+    border-radius:999px;
+    background:rgba(37,99,235,.06);
+    border:1px solid rgba(37,99,235,.14);
+    color:#0b2a63;
+    white-space:nowrap;
   }
-  .chip strong{color:#fff}
+  .chip strong{color:#0f172a}
 
   /* Tabs */
   .tabs{
@@ -91,18 +106,19 @@
   .tab{
     padding:10px 14px;border-radius:999px;
     border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
+    background:rgba(255,255,255,.75);
     color:var(--txt);
     cursor:pointer;
     transition:.18s ease;
     font-size:13px;
+    box-shadow:0 6px 16px rgba(15,23,42,.06);
   }
-  .tab:hover{transform:translateY(-1px);border-color:rgba(96,165,250,.35)}
+  .tab:hover{transform:translateY(-1px);border-color:rgba(37,99,235,.25)}
   .tab.active{
-    background:linear-gradient(135deg, rgba(59,130,246,.95), rgba(96,165,250,.6));
-    border-color:rgba(255,255,255,.18);
-    color:#061224;
-    font-weight:700;
+    background:linear-gradient(135deg, rgba(37,99,235,1), rgba(96,165,250,.85));
+    border-color:rgba(37,99,235,.18);
+    color:#fff;
+    font-weight:800;
   }
 
   /* Panels */
@@ -110,7 +126,7 @@
     margin-top:14px;
     border:1px solid var(--line);
     border-radius:var(--radius);
-    background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.74));
     box-shadow:var(--shadow);
     padding:16px;
     display:none;
@@ -127,46 +143,48 @@
     padding:12px 14px;
     border-radius:14px;
     border:1px solid var(--line);
-    background:rgba(5,10,25,.6);
+    background:#fff;
     color:var(--txt);
     outline:none;
     transition:.15s ease;
     font-size:14px;
   }
   .input:focus{
-    border-color:rgba(96,165,250,.45);
-    box-shadow:0 0 0 4px rgba(59,130,246,.12);
+    border-color:rgba(37,99,235,.35);
+    box-shadow:0 0 0 4px rgba(37,99,235,.12);
   }
   .btn{
     padding:12px 14px;
     border-radius:14px;
-    border:1px solid rgba(255,255,255,.1);
-    background:linear-gradient(135deg, rgba(59,130,246,1), rgba(96,165,250,.7));
-    color:#061224;
+    border:1px solid rgba(37,99,235,.15);
+    background:linear-gradient(135deg, rgba(37,99,235,1), rgba(96,165,250,.9));
+    color:#fff;
     cursor:pointer;
-    font-weight:800;
+    font-weight:900;
     transition:.15s ease;
     font-size:14px;
     white-space:nowrap;
+    box-shadow:0 10px 20px rgba(37,99,235,.18);
   }
   .btn:hover{transform:translateY(-1px);filter:saturate(1.05)}
   .btn.secondary{
-    background:rgba(255,255,255,.06);
-    color:var(--txt);
+    background:#fff;
+    color:#0f172a;
     border:1px solid var(--line);
-    font-weight:700;
+    font-weight:800;
+    box-shadow:0 10px 20px rgba(15,23,42,.06);
   }
   .btn.danger{
-    background:linear-gradient(135deg, rgba(239,68,68,1), rgba(244,63,94,.7));
-    color:#1b0b0b;
+    background:linear-gradient(135deg, rgba(220,38,38,1), rgba(248,113,113,.9));
+    border-color:rgba(220,38,38,.15);
+    box-shadow:0 10px 20px rgba(220,38,38,.14);
   }
 
-  /* Result cards */
+  /* Info card */
   .infoCard{
     padding:14px;border-radius:16px;
     border:1px solid var(--line);
-    background:linear-gradient(180deg, rgba(15,23,42,.9), rgba(15,23,42,.55));
-    margin-top:10px;
+    background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(250,252,255,.95));
   }
   .infoGrid{
     display:grid;
@@ -177,13 +195,15 @@
     padding:10px 12px;
     border:1px solid var(--line);
     border-radius:14px;
-    background:rgba(255,255,255,.03);
+    background:rgba(37,99,235,.03);
   }
   .k{font-size:12px;color:var(--muted)}
-  .v{font-size:14px;font-weight:800;margin-top:3px}
-  @media(max-width:640px){
+  .v{font-size:14px;font-weight:900;margin-top:3px}
+
+  @media(max-width:700px){
     .infoGrid{grid-template-columns:1fr}
     .search{grid-template-columns:1fr}
+    .chips{display:none}
   }
 
   /* Table */
@@ -192,74 +212,76 @@
     overflow:auto;
     border-radius:16px;
     border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
+    background:#fff;
   }
   table{width:100%;border-collapse:collapse;min-width:860px}
   th,td{padding:12px;border-bottom:1px solid var(--line);text-align:center;vertical-align:top}
   th{
     position:sticky;top:0;
-    background:rgba(7,12,28,.95);
-    backdrop-filter: blur(10px);
+    background:#fbfcff;
     z-index:2;
-    font-size:12px;color:var(--muted);
-    letter-spacing:.2px;
+    font-size:12px;
+    color:var(--muted);
   }
   td{font-size:13px}
   .day{
     text-align:right;
-    font-weight:800;
-    color:#fff;
+    font-weight:900;
+    color:var(--txt);
     white-space:nowrap;
+    background:rgba(37,99,235,.03);
   }
-  .slot{
-    text-align:right;
-    border-left:1px solid var(--line);
-  }
+  .slot{text-align:right;border-left:1px solid var(--line)}
   .course{
     padding:10px 10px;
     border-radius:14px;
     border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
+    background:#fff;
     margin:6px 0;
+    box-shadow:0 10px 18px rgba(15,23,42,.06);
   }
-  .course .name{font-weight:800;color:#fff;font-size:13px}
+  .course .name{font-weight:900;color:var(--txt);font-size:13px}
   .course .meta{color:var(--muted);font-size:12px;margin-top:4px}
+
   .tag{
     display:inline-block;
     padding:4px 8px;border-radius:999px;
     border:1px solid var(--line);
-    background:rgba(255,255,255,.04);
+    background:#f8fafc;
     color:var(--muted);
     font-size:11px;
     margin-top:6px;
+    font-weight:800;
   }
-  .tag.ok{color:#04210f;background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.35)}
-  .tag.warn{color:#241400;background:rgba(245,158,11,.16);border-color:rgba(245,158,11,.35)}
-  .tag.danger{color:#2b0707;background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.38)}
-  .cellForbidden{
-    background:rgba(239,68,68,.10);
-  }
+  .tag.ok{color:#064e2b;background:rgba(22,163,74,.10);border-color:rgba(22,163,74,.20)}
+  .tag.warn{color:#78350f;background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.25)}
+  .tag.danger{color:#7f1d1d;background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.22)}
+
+  .cellForbidden{background:rgba(220,38,38,.06)}
   .conflictBox{
     margin-top:8px;
     padding:10px 12px;
     border-radius:14px;
-    border:1px solid rgba(239,68,68,.35);
-    background:rgba(239,68,68,.10);
-    color:#ffd1d1;
+    border:1px solid rgba(220,38,38,.25);
+    background:rgba(220,38,38,.08);
+    color:#7f1d1d;
     font-size:12px;
-    font-weight:800;
+    font-weight:900;
     text-align:right;
   }
   .denyBox{
     margin-top:8px;
     padding:10px 12px;
     border-radius:14px;
-    border:1px solid rgba(239,68,68,.35);
-    background:rgba(239,68,68,.12);
-    color:#ffd1d1;
+    border:1px solid rgba(220,38,38,.25);
+    background:rgba(220,38,38,.10);
+    color:#7f1d1d;
     font-size:12px;
-    font-weight:800;
+    font-weight:900;
     text-align:right;
+  }
+  .note{
+    font-size:12px;color:var(--muted);text-align:center;margin-top:10px
   }
 
   /* Admin */
@@ -275,28 +297,21 @@
   .card{
     border:1px solid var(--line);
     border-radius:16px;
-    background:rgba(255,255,255,.03);
+    background:#fff;
     padding:14px;
+    box-shadow:0 12px 22px rgba(15,23,42,.06);
   }
-  .card h3{
-    margin:0 0 10px;
-    font-size:13px;
-    color:#fff;
-  }
+  .card h3{margin:0 0 10px;font-size:13px;color:var(--txt);font-weight:900}
   .statLine{font-size:12px;color:var(--muted);line-height:1.8}
   .pill{
     display:inline-block;
     padding:2px 8px;border-radius:999px;
     border:1px solid var(--line);
-    background:rgba(255,255,255,.03);
-    color:#fff;
-    font-weight:800;
+    background:#f8fafc;
+    color:var(--txt);
+    font-weight:900;
   }
-
   .logsWrap{margin-top:12px}
-  .note{
-    font-size:12px;color:var(--muted);text-align:center;margin-top:10px
-  }
 
   /* Toast */
   .toast{
@@ -304,15 +319,15 @@
     max-width:1120px;margin:0 auto;
     padding:12px 14px;border-radius:14px;
     border:1px solid var(--line);
-    background:rgba(2,6,23,.82);
+    background:rgba(255,255,255,.92);
     backdrop-filter: blur(10px);
     color:var(--txt);
     display:none;
-    box-shadow:0 12px 30px rgba(0,0,0,.35);
+    box-shadow:0 12px 30px rgba(15,23,42,.16);
     font-size:13px;
   }
   .toast.show{display:block}
-  .toast strong{color:#fff}
+  .toast strong{color:var(--txt)}
 </style>
 </head>
 
@@ -321,23 +336,21 @@
 
   <div class="header">
     <div class="brand">
-      <div class="logo" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M4 7.5L12 3l8 4.5v9L12 21l-8-4.5v-9Z" stroke="white" stroke-width="1.6" opacity=".9"/>
-          <path d="M12 7v10" stroke="white" stroke-width="1.6" opacity=".9"/>
-          <path d="M8 10.2h8" stroke="white" stroke-width="1.6" opacity=".9"/>
-        </svg>
+      <div class="logoBox">
+        <!-- ضع ملف الشعار داخل الريبو باسم tvtc-logo.png -->
+        <img src="tvtc-logo.png" alt="شعار المؤسسة العامة للتدريب التقني والمهني"
+             onerror="this.style.display='none';" />
       </div>
       <div class="title">
-        <h1>بوابة الاستعلام عن جدول الاختبارات</h1>
-        <p>متوافق مع الجوال — يعمل مباشرة عبر Google Sheets (JSONP)</p>
+        <h1 id="headerTitle">بوابة الاستعلام عن جدول الاختبارات</h1>
+        <p class="sub" id="headerSub"></p>
       </div>
     </div>
 
     <div class="chips">
-      <div class="chip">المصدر: <strong>Google Sheet</strong></div>
-      <div class="chip">الحماية: <strong>Token + Rate</strong></div>
-      <div class="chip">النشر: <strong>GitHub Pages</strong></div>
+      <div class="chip">المؤسسة: <strong>TVTC</strong></div>
+      <div class="chip">البيانات: <strong>Google Sheet</strong></div>
+      <div class="chip">التشغيل: <strong>GitHub Pages</strong></div>
     </div>
   </div>
 
@@ -353,7 +366,7 @@
       <button class="btn" onclick="searchTrainee()">بحث</button>
     </div>
     <div id="studentResult"></div>
-    <div class="note">في حال وجود تعارض (مادتين بنفس الفترة) سيظهر تنبيه باللون الأحمر.</div>
+    <div class="note">في حال وجود تعارض (مادتين بنفس الفترة) سيظهر تنبيه واضح باللون الأحمر.</div>
   </section>
 
   <!-- ================= Admin ================= -->
@@ -393,7 +406,7 @@
           <h3>إدارة الجلسة</h3>
           <button class="btn danger" onclick="adminLogout()">تسجيل خروج</button>
           <div class="statLine" style="margin-top:10px">
-            تذكير: السجلات تحفظ في ورقة <span class="pill">API_LOGS</span> داخل نفس ملف الشيت.
+            السجلات تحفظ في ورقة <span class="pill">API_LOGS</span> داخل ملف الشيت.
           </div>
         </div>
 
@@ -417,7 +430,12 @@ var API_URL   = "https://script.google.com/macros/s/AKfycbylmtoOr9mTn9OBGUbyP9X4
 var API_TOKEN = "SECRET_TOKEN_1447H";
 var ADMIN_PASSWORD = "admin@1447";
 
+/* اسم الكلية في الهيدر (عدّل كما تريد) */
+var COLLEGE_NAME = "الكلية التقنية والمعهد الصناعي بسراة عبيدة";
+
 /* ================== UI Helpers ================== */
+document.getElementById("headerSub").innerText = "المؤسسة العامة للتدريب التقني والمهني — " + COLLEGE_NAME;
+
 function setTab(tab){
   document.getElementById("tabStudent").classList.toggle("active", tab==="student");
   document.getElementById("tabAdmin").classList.toggle("active", tab==="admin");
@@ -526,9 +544,9 @@ function renderSchedule(data){
   html += '<div class="tableWrap"><table>'
        +  '<thead><tr>'
        +    '<th style="text-align:right">اليوم</th>'
-       +    '<th>الفترة الأولى<span class="time">8:00 → 10:30</span></th>'
-       +    '<th>الفترة الثانية<span class="time">11:00 → 12:30</span></th>'
-       +    '<th>الفترة الثالثة<span class="time">12:00 → 12:30</span></th>'
+       +    '<th>الفترة الأولى<span class="time">8:00 → 9:30</span></th>'
+       +    '<th>الفترة الثانية<span class="time">10:00 → 11:30</span></th>'
+       +    '<th>الفترة الثالثة<span class="time">12:00 → 1:30</span></th>'
        +  '</tr></thead><tbody>';
 
   for(var di=0; di<days.length; di++){
@@ -539,7 +557,7 @@ function renderSchedule(data){
     for(var p=1; p<=3; p++){
       var slot = (d.periods && d.periods[p]) ? d.periods[p] : [];
       if(!slot || slot.length === 0){
-        html += '<td class="slot" style="text-align:center;color:rgba(255,255,255,.45)">—</td>';
+        html += '<td class="slot" style="text-align:center;color:rgba(100,116,139,.9)">—</td>';
         continue;
       }
 
@@ -565,7 +583,7 @@ function renderSchedule(data){
       }
 
       if(hasConflict){
-        html += '<div class="conflictBox">تنبيه: لديك أكثر من مقرر في نفس الفترة — راجع شؤون المتدربين لتعديل التعارض.</div>';
+        html += '<div class="conflictBox">تنبيه: لديك أكثر من مقرر في نفس الفترة — راجع رئيس القسم لتعديل التعارض.</div>';
       }
       if(anyForbidden){
         html += '<div class="denyBox">ملاحظة: يوجد مقرر حالته (حرمان/مطوي قيده) — لا يمكن دخول الاختبار لهذا المقرر.</div>';
@@ -655,19 +673,16 @@ async function loadLogs(){
       return;
     }
 
-    var html = '<div class="tableWrap"><table>'
-             + '<thead><tr>';
-
+    var html = '<div class="tableWrap"><table><thead><tr>';
     for(var i=0; i<headers.length; i++){
       html += '<th>' + esc(headers[i]) + '</th>';
     }
     html += '</tr></thead><tbody>';
 
-    // الأحدث أولاً
     for(var r=rows.length-1; r>=0; r--){
       html += '<tr>';
       for(var c=0; c<headers.length; c++){
-        html += '<td style="font-size:12px;color:rgba(255,255,255,.85)">' + esc(rows[r][c]) + '</td>';
+        html += '<td style="font-size:12px;color:#0f172a">' + esc(rows[r][c]) + '</td>';
       }
       html += '</tr>';
     }
