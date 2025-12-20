@@ -3,118 +3,421 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>بوابة الاستعلام عن جدول الاختبارات</title>
+<title>بوابة الاستعلام | جدول الاختبارات</title>
+
 <style>
-  body{font-family:Tahoma,Arial;background:#f3f4f6;margin:0}
-  .container{max-width:1100px;margin:28px auto;background:#fff;padding:22px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.08)}
-  h1,h2{margin:0 0 14px;text-align:center;color:#111827}
-  .tabs{display:flex;gap:10px;justify-content:center;margin:10px 0 18px}
-  .tabs button{padding:10px 14px;border-radius:10px;border:1px solid #d1d5db;background:#fff;cursor:pointer}
-  .tabs button.active{background:#2563eb;color:#fff;border-color:#2563eb}
-  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
-  input,button{padding:10px 12px;border-radius:10px;border:1px solid #d1d5db;font-size:15px}
-  button.primary{background:#2563eb;color:#fff;border:none;cursor:pointer}
-  button.primary:hover{background:#1d4ed8}
-  button.danger{background:#dc2626;color:#fff;border:none;cursor:pointer}
-  button.danger:hover{background:#b91c1c}
-  .panel{display:none}
+  :root{
+    --bg:#0b1220;
+    --card:#0f172a;
+    --card2:#111c35;
+    --line:rgba(255,255,255,.08);
+    --txt:#e5e7eb;
+    --muted:#a7b0c0;
+    --brand:#3b82f6;
+    --brand2:#60a5fa;
+    --ok:#22c55e;
+    --warn:#f59e0b;
+    --danger:#ef4444;
+    --chip:#0b2446;
+    --shadow:0 18px 40px rgba(0,0,0,.35);
+    --radius:18px;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Tahoma,Arial;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(96,165,250,.25), transparent 60%),
+      radial-gradient(900px 500px at 10% 0%, rgba(59,130,246,.18), transparent 55%),
+      linear-gradient(180deg, #050813, #0b1220 55%, #050813);
+    color:var(--txt);
+  }
+
+  .wrap{max-width:1120px;margin:28px auto;padding:0 16px}
+
+  /* Header */
+  .header{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:18px 18px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+  .header::after{
+    content:"";
+    position:absolute;inset:auto -30% -120% -30%;
+    height:240px;
+    background:radial-gradient(circle at 50% 10%, rgba(96,165,250,.35), transparent 65%);
+    filter:blur(0px);
+    pointer-events:none;
+  }
+  .brand{
+    display:flex;align-items:center;gap:12px;
+  }
+  .logo{
+    width:46px;height:46px;border-radius:14px;
+    background:linear-gradient(135deg, rgba(59,130,246,.9), rgba(96,165,250,.55));
+    box-shadow:0 10px 20px rgba(59,130,246,.18);
+    display:grid;place-items:center;
+    border:1px solid rgba(255,255,255,.12);
+  }
+  .logo svg{width:26px;height:26px}
+  .title{
+    display:flex;flex-direction:column;gap:2px
+  }
+  .title h1{margin:0;font-size:16px;font-weight:700;letter-spacing:.2px}
+  .title p{margin:0;font-size:12px;color:var(--muted)}
+  .chips{
+    display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;
+  }
+  .chip{
+    font-size:12px;color:var(--txt);
+    padding:8px 10px;border-radius:999px;
+    background:rgba(255,255,255,.05);
+    border:1px solid var(--line);
+    backdrop-filter: blur(6px);
+  }
+  .chip strong{color:#fff}
+
+  /* Tabs */
+  .tabs{
+    margin-top:14px;
+    display:flex;gap:10px;flex-wrap:wrap;
+  }
+  .tab{
+    padding:10px 14px;border-radius:999px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    color:var(--txt);
+    cursor:pointer;
+    transition:.18s ease;
+    font-size:13px;
+  }
+  .tab:hover{transform:translateY(-1px);border-color:rgba(96,165,250,.35)}
+  .tab.active{
+    background:linear-gradient(135deg, rgba(59,130,246,.95), rgba(96,165,250,.6));
+    border-color:rgba(255,255,255,.18);
+    color:#061224;
+    font-weight:700;
+  }
+
+  /* Panels */
+  .panel{
+    margin-top:14px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    box-shadow:var(--shadow);
+    padding:16px;
+    display:none;
+  }
   .panel.active{display:block}
-  .info{background:#eff6ff;padding:10px 12px;border-radius:10px;color:#1e3a8a;font-size:14px;margin-top:10px}
-  .no-data{background:#fef2f2;color:#991b1b;padding:10px 12px;border-radius:10px;white-space:pre-line}
-  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
-  th,td{border:1px solid #e5e7eb;padding:8px;text-align:center;vertical-align:middle}
-  th{background:#f9fafb;font-weight:700}
-  .time{display:block;font-size:11px;color:#6b7280;margin-top:2px}
-  .forbidden{background:#fee2e2}
-  .warn{color:#b91c1c;font-weight:800;font-size:12px;margin-top:6px}
-  .small{font-size:12px;color:#6b7280}
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px}
-  .card{border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fff}
-  .logtable td{font-size:12px}
-  .footer{text-align:center;color:#6b7280;font-size:12px;margin-top:14px}
+
+  /* Search */
+  .search{
+    display:grid;grid-template-columns:1fr auto;gap:10px;
+    margin-bottom:12px;
+  }
+  .input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(5,10,25,.6);
+    color:var(--txt);
+    outline:none;
+    transition:.15s ease;
+    font-size:14px;
+  }
+  .input:focus{
+    border-color:rgba(96,165,250,.45);
+    box-shadow:0 0 0 4px rgba(59,130,246,.12);
+  }
+  .btn{
+    padding:12px 14px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.1);
+    background:linear-gradient(135deg, rgba(59,130,246,1), rgba(96,165,250,.7));
+    color:#061224;
+    cursor:pointer;
+    font-weight:800;
+    transition:.15s ease;
+    font-size:14px;
+    white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(-1px);filter:saturate(1.05)}
+  .btn.secondary{
+    background:rgba(255,255,255,.06);
+    color:var(--txt);
+    border:1px solid var(--line);
+    font-weight:700;
+  }
+  .btn.danger{
+    background:linear-gradient(135deg, rgba(239,68,68,1), rgba(244,63,94,.7));
+    color:#1b0b0b;
+  }
+
+  /* Result cards */
+  .infoCard{
+    padding:14px;border-radius:16px;
+    border:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(15,23,42,.9), rgba(15,23,42,.55));
+    margin-top:10px;
+  }
+  .infoGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .kv{
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:rgba(255,255,255,.03);
+  }
+  .k{font-size:12px;color:var(--muted)}
+  .v{font-size:14px;font-weight:800;margin-top:3px}
+  @media(max-width:640px){
+    .infoGrid{grid-template-columns:1fr}
+    .search{grid-template-columns:1fr}
+  }
+
+  /* Table */
+  .tableWrap{
+    margin-top:12px;
+    overflow:auto;
+    border-radius:16px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+  }
+  table{width:100%;border-collapse:collapse;min-width:860px}
+  th,td{padding:12px;border-bottom:1px solid var(--line);text-align:center;vertical-align:top}
+  th{
+    position:sticky;top:0;
+    background:rgba(7,12,28,.95);
+    backdrop-filter: blur(10px);
+    z-index:2;
+    font-size:12px;color:var(--muted);
+    letter-spacing:.2px;
+  }
+  td{font-size:13px}
+  .day{
+    text-align:right;
+    font-weight:800;
+    color:#fff;
+    white-space:nowrap;
+  }
+  .slot{
+    text-align:right;
+    border-left:1px solid var(--line);
+  }
+  .course{
+    padding:10px 10px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    margin:6px 0;
+  }
+  .course .name{font-weight:800;color:#fff;font-size:13px}
+  .course .meta{color:var(--muted);font-size:12px;margin-top:4px}
+  .tag{
+    display:inline-block;
+    padding:4px 8px;border-radius:999px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.04);
+    color:var(--muted);
+    font-size:11px;
+    margin-top:6px;
+  }
+  .tag.ok{color:#04210f;background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.35)}
+  .tag.warn{color:#241400;background:rgba(245,158,11,.16);border-color:rgba(245,158,11,.35)}
+  .tag.danger{color:#2b0707;background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.38)}
+  .cellForbidden{
+    background:rgba(239,68,68,.10);
+  }
+  .conflictBox{
+    margin-top:8px;
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid rgba(239,68,68,.35);
+    background:rgba(239,68,68,.10);
+    color:#ffd1d1;
+    font-size:12px;
+    font-weight:800;
+    text-align:right;
+  }
+  .denyBox{
+    margin-top:8px;
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid rgba(239,68,68,.35);
+    background:rgba(239,68,68,.12);
+    color:#ffd1d1;
+    font-size:12px;
+    font-weight:800;
+    text-align:right;
+  }
+
+  /* Admin */
+  .adminGrid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+    margin-top:10px;
+  }
+  @media(max-width:900px){
+    .adminGrid{grid-template-columns:1fr}
+  }
+  .card{
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:rgba(255,255,255,.03);
+    padding:14px;
+  }
+  .card h3{
+    margin:0 0 10px;
+    font-size:13px;
+    color:#fff;
+  }
+  .statLine{font-size:12px;color:var(--muted);line-height:1.8}
+  .pill{
+    display:inline-block;
+    padding:2px 8px;border-radius:999px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.03);
+    color:#fff;
+    font-weight:800;
+  }
+
+  .logsWrap{margin-top:12px}
+  .note{
+    font-size:12px;color:var(--muted);text-align:center;margin-top:10px
+  }
+
+  /* Toast */
+  .toast{
+    position:fixed;bottom:18px;left:18px;right:18px;
+    max-width:1120px;margin:0 auto;
+    padding:12px 14px;border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(2,6,23,.82);
+    backdrop-filter: blur(10px);
+    color:var(--txt);
+    display:none;
+    box-shadow:0 12px 30px rgba(0,0,0,.35);
+    font-size:13px;
+  }
+  .toast.show{display:block}
+  .toast strong{color:#fff}
 </style>
 </head>
+
 <body>
-<div class="container">
-  <h1>بوابة الاستعلام عن جدول الاختبارات</h1>
+<div class="wrap">
+
+  <div class="header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M4 7.5L12 3l8 4.5v9L12 21l-8-4.5v-9Z" stroke="white" stroke-width="1.6" opacity=".9"/>
+          <path d="M12 7v10" stroke="white" stroke-width="1.6" opacity=".9"/>
+          <path d="M8 10.2h8" stroke="white" stroke-width="1.6" opacity=".9"/>
+        </svg>
+      </div>
+      <div class="title">
+        <h1>بوابة الاستعلام عن جدول الاختبارات</h1>
+        <p>متوافق مع الجوال — يعمل مباشرة عبر Google Sheets (JSONP)</p>
+      </div>
+    </div>
+
+    <div class="chips">
+      <div class="chip">المصدر: <strong>Google Sheet</strong></div>
+      <div class="chip">الحماية: <strong>Token + Rate</strong></div>
+      <div class="chip">النشر: <strong>GitHub Pages</strong></div>
+    </div>
+  </div>
 
   <div class="tabs">
-    <button id="tabStudent" class="active" onclick="setTab('student')">وضع المتدرب</button>
-    <button id="tabAdmin" onclick="setTab('admin')">لوحة تحكم المدير</button>
+    <button id="tabStudent" class="tab active" onclick="setTab('student')">وضع المتدرب</button>
+    <button id="tabAdmin" class="tab" onclick="setTab('admin')">لوحة تحكم المدير</button>
   </div>
 
-  <!-- =================== Student Panel =================== -->
-  <div id="panelStudent" class="panel active">
-    <div class="row">
-      <input id="traineeId" placeholder="أدخل الرقم التدريبي" />
-      <button class="primary" onclick="searchTrainee()">بحث</button>
+  <!-- ================= Student ================= -->
+  <section id="panelStudent" class="panel active">
+    <div class="search">
+      <input class="input" id="traineeId" placeholder="أدخل الرقم التدريبي ثم اضغط بحث" inputmode="numeric" />
+      <button class="btn" onclick="searchTrainee()">بحث</button>
     </div>
     <div id="studentResult"></div>
-  </div>
+    <div class="note">في حال وجود تعارض (مادتين بنفس الفترة) سيظهر تنبيه باللون الأحمر.</div>
+  </section>
 
-  <!-- =================== Admin Panel =================== -->
-  <div id="panelAdmin" class="panel">
+  <!-- ================= Admin ================= -->
+  <section id="panelAdmin" class="panel">
     <div id="adminLogin">
-      <div class="row">
-        <input type="password" id="adminPass" placeholder="كلمة مرور المدير" />
-        <button class="primary" onclick="adminLogin()">دخول</button>
+      <div class="search" style="grid-template-columns:1fr auto;">
+        <input class="input" type="password" id="adminPass" placeholder="كلمة مرور المدير" />
+        <button class="btn" onclick="adminLogin()">دخول</button>
       </div>
-      <div class="small" style="text-align:center">* كلمة المرور محلية داخل الصفحة (يمكن تغييرها)</div>
+      <div class="note">* كلمة المرور محلية داخل الصفحة. يفضّل تغييرها قبل مشاركة الرابط.</div>
     </div>
 
     <div id="adminArea" style="display:none">
-      <h2>لوحة تحكم المدير</h2>
+      <div class="adminGrid">
 
-      <div class="cards">
         <div class="card">
-          <div style="font-weight:700;margin-bottom:6px">اختبار الاتصال</div>
-          <button class="primary" onclick="testAPI()">اختبار API</button>
-          <div id="apiStatus" class="small" style="margin-top:8px"></div>
+          <h3>اختبار الاتصال</h3>
+          <button class="btn" onclick="testAPI()">اختبار API</button>
+          <div id="apiStatus" class="statLine" style="margin-top:10px"></div>
         </div>
 
         <div class="card">
-          <div style="font-weight:700;margin-bottom:6px">إحصائيات السجلات</div>
-          <div id="statsBox" class="small">اضغط "تحديث السجلات"</div>
+          <h3>إحصائيات السجلات</h3>
+          <div id="statsBox" class="statLine">اضغط “تحديث السجلات” لعرض الإحصائيات.</div>
         </div>
 
         <div class="card">
-          <div style="font-weight:700;margin-bottom:6px">تحديث السجلات</div>
-          <div class="row" style="justify-content:flex-start">
-            <input id="logLimit" value="50" style="width:110px" />
-            <button class="primary" onclick="loadLogs()">تحديث</button>
+          <h3>تحديث السجلات</h3>
+          <div class="search" style="grid-template-columns:1fr auto;">
+            <input class="input" id="logLimit" value="50" />
+            <button class="btn secondary" onclick="loadLogs()">تحديث</button>
           </div>
-          <div class="small">حد أقصى 200 سجل</div>
+          <div class="statLine">حد أقصى: 200 سجل — الأحدث يظهر أولاً.</div>
         </div>
 
         <div class="card">
-          <div style="font-weight:700;margin-bottom:6px">خروج</div>
-          <button class="danger" onclick="adminLogout()">تسجيل خروج</button>
+          <h3>إدارة الجلسة</h3>
+          <button class="btn danger" onclick="adminLogout()">تسجيل خروج</button>
+          <div class="statLine" style="margin-top:10px">
+            تذكير: السجلات تحفظ في ورقة <span class="pill">API_LOGS</span> داخل نفس ملف الشيت.
+          </div>
         </div>
+
       </div>
 
-      <div id="logsArea" style="margin-top:12px"></div>
+      <div class="logsWrap" id="logsArea"></div>
     </div>
+  </section>
+
+  <div class="note" style="margin-top:14px">
+    البيانات تُجلب من Google Sheets عبر Apps Script — بدون CORS باستخدام JSONP.
   </div>
 
-  <div class="footer">البيانات تم جلبها من منصة رايات ويجب على المتدرب التأكد من الجدول التدريبي</div>
 </div>
 
+<div id="toast" class="toast"></div>
+
 <script>
-/* ====== إعدادات ====== */
+/* ================== إعدادات ================== */
 var API_URL   = "https://script.google.com/macros/s/AKfycbylmtoOr9mTn9OBGUbyP9X42udQpojuaZMakQtf65BzaXFrIOqvcoQTkuKvvbP2MuggUQ/exec";
 var API_TOKEN = "SECRET_TOKEN_1447H";
-
-/* كلمة مرور لوحة المدير (غيّرها) */
 var ADMIN_PASSWORD = "admin@1447";
 
-/* ====== Helpers (توافق عالي) ====== */
-function esc(s){
-  s = (s === null || s === undefined) ? "" : String(s);
-  return s.replace(/[&<>"']/g, function(m){
-    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
-  });
-}
-
+/* ================== UI Helpers ================== */
 function setTab(tab){
   document.getElementById("tabStudent").classList.toggle("active", tab==="student");
   document.getElementById("tabAdmin").classList.toggle("active", tab==="admin");
@@ -122,12 +425,25 @@ function setTab(tab){
   document.getElementById("panelAdmin").classList.toggle("active", tab==="admin");
 }
 
-/* ====== JSONP (بدون CORS) ====== */
+function esc(s){
+  s = (s === null || s === undefined) ? "" : String(s);
+  return s.replace(/[&<>"']/g, function(m){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
+  });
+}
+
+function toast(msg, ms){
+  var el = document.getElementById("toast");
+  el.innerHTML = msg;
+  el.classList.add("show");
+  setTimeout(function(){ el.classList.remove("show"); }, ms || 2600);
+}
+
+/* ================== JSONP ================== */
 function jsonp(url){
   return new Promise(function(resolve, reject){
     var cbName = "cb_" + Math.random().toString(36).slice(2);
     var script = document.createElement("script");
-
     var timeout = setTimeout(function(){
       cleanup();
       reject(new Error("JSONP timeout"));
@@ -156,119 +472,126 @@ function jsonp(url){
 }
 
 function callSchedule(id){
-  var url = API_URL + "?id=" + encodeURIComponent(id) +
-            "&token=" + encodeURIComponent(API_TOKEN);
+  var url = API_URL + "?id=" + encodeURIComponent(id) + "&token=" + encodeURIComponent(API_TOKEN);
   return jsonp(url);
 }
 
 function callLogs(limit){
-  var url = API_URL + "?action=logs&limit=" + encodeURIComponent(limit) +
-            "&token=" + encodeURIComponent(API_TOKEN);
+  var url = API_URL + "?action=logs&limit=" + encodeURIComponent(limit) + "&token=" + encodeURIComponent(API_TOKEN);
   return jsonp(url);
 }
 
-/* ====== Student ====== */
+/* ================== Student ================== */
 async function searchTrainee(){
   var id = document.getElementById("traineeId").value.trim();
   var box = document.getElementById("studentResult");
-  box.innerHTML = "جاري البحث...";
+  box.innerHTML = '<div class="note">جاري البحث…</div>';
 
   if(!id){
-    box.innerHTML = '<div class="no-data">من فضلك أدخل الرقم التدريبي</div>';
+    box.innerHTML = '<div class="infoCard"><div class="denyBox">من فضلك أدخل الرقم التدريبي.</div></div>';
     return;
   }
 
   try{
     var data = await callSchedule(id);
     if(!data.ok){
-      box.innerHTML = '<div class="no-data">' + esc(data.message) + '</div>';
+      box.innerHTML = '<div class="infoCard"><div class="denyBox">' + esc(data.message) + '</div></div>';
+      toast('لم يتم العثور على بيانات', 2200);
       return;
     }
-    box.innerHTML = renderScheduleTable(data);
+    box.innerHTML = renderSchedule(data);
+    toast('تم جلب البيانات بنجاح', 1600);
   }catch(err){
-    box.innerHTML = '<div class="no-data">فشل الاتصال. تأكد من تحديث نشر Apps Script (Deploy → Update).</div>';
+    box.innerHTML = '<div class="infoCard"><div class="denyBox">فشل الاتصال. تأكد من Deploy → Update في Apps Script.</div></div>';
   }
 }
 
-function renderScheduleTable(data){
-  var html = ''
-    + '<div class="info">'
-    +   '<div><strong>اسم المتدرب:</strong> ' + esc(data.traineeName) + '</div>'
-    +   '<div><strong>الرقم التدريبي:</strong> ' + esc(data.traineeId) + '</div>'
-    + '</div>'
-    + '<table>'
-    + '<thead><tr>'
-    +   '<th>اليوم</th>'
-    +   '<th>الفترة الأولى<span class="time">8:00 إلى 10:30</span></th>'
-    +   '<th>الفترة الثانية<span class="time">11:00 إلى 12:30</span></th>'
-    +   '<th>الفترة الثالثة<span class="time">12:00 إلى 12:30</span></th>'
-    + '</tr></thead><tbody>';
+function renderSchedule(data){
+  var info = ''
+    + '<div class="infoCard">'
+    +   '<div class="infoGrid">'
+    +     '<div class="kv"><div class="k">اسم المتدرب</div><div class="v">' + esc(data.traineeName) + '</div></div>'
+    +     '<div class="kv"><div class="k">الرقم التدريبي</div><div class="v">' + esc(data.traineeId) + '</div></div>'
+    +   '</div>'
+    + '</div>';
+
+  var html = info;
 
   var days = (data.days && data.days.length) ? data.days : [];
   if(days.length === 0){
-    html += '<tr><td colspan="4">لا يوجد جدول اختبارات لهذا المتدرب.</td></tr>';
-  } else {
-    for(var di=0; di<days.length; di++){
-      var d = days[di];
-      html += '<tr><td>' + esc(d.dayLabel) + '</td>';
-
-      for(var p=1; p<=3; p++){
-        var slot = (d.periods && d.periods[p]) ? d.periods[p] : [];
-        if(!slot || slot.length === 0){
-          html += '<td>-</td>';
-        } else {
-          var hasConflict = slot.length > 1;
-          var anyForbidden = false;
-          for(var si=0; si<slot.length; si++){
-            if(slot[si] && slot[si].forbidden) { anyForbidden = true; break; }
-          }
-
-          html += '<td class="' + (anyForbidden ? 'forbidden' : '') + '">';
-
-          for(var idx=0; idx<slot.length; idx++){
-            var c = slot[idx];
-            var isOther = hasConflict && idx > 0;
-            var cls = isOther ? 'warn' : '';
-
-            html += '<div class="' + cls + '">'
-                 +   '<div style="font-weight:700">' + esc(c.courseName) + '</div>'
-                 +   '<div class="small">(' + esc(c.courseRef) + ') - ' + esc(c.status) + '</div>'
-                 + '</div>';
-
-            if(idx < slot.length - 1){
-              html += '<hr style="border:none;border-top:1px dashed #ccc;margin:6px 0;">';
-            }
-          }
-
-          if(hasConflict){
-            html += '<div class="warn">تنبيه: لديك أكثر من مقرر في نفس الفترة — تم تمييز المادة الأخرى بالأحمر</div>';
-          }
-          if(anyForbidden){
-            html += '<div class="warn">لا يمكن دخول الاختبار لأحد المقررات بسبب (حرمان/مطوي قيده)</div>';
-          }
-
-          html += '</td>';
-        }
-      }
-
-      html += '</tr>';
-    }
+    html += '<div class="infoCard"><div class="denyBox">لا يوجد جدول اختبارات لهذا المتدرب.</div></div>';
+    return html;
   }
 
-  html += '</tbody></table>';
+  html += '<div class="tableWrap"><table>'
+       +  '<thead><tr>'
+       +    '<th style="text-align:right">اليوم</th>'
+       +    '<th>الفترة الأولى<span class="time">8:00 → 10:30</span></th>'
+       +    '<th>الفترة الثانية<span class="time">11:00 → 12:30</span></th>'
+       +    '<th>الفترة الثالثة<span class="time">12:00 → 12:30</span></th>'
+       +  '</tr></thead><tbody>';
+
+  for(var di=0; di<days.length; di++){
+    var d = days[di];
+    html += '<tr>'
+         +    '<td class="day">' + esc(d.dayLabel) + '</td>';
+
+    for(var p=1; p<=3; p++){
+      var slot = (d.periods && d.periods[p]) ? d.periods[p] : [];
+      if(!slot || slot.length === 0){
+        html += '<td class="slot" style="text-align:center;color:rgba(255,255,255,.45)">—</td>';
+        continue;
+      }
+
+      var hasConflict = slot.length > 1;
+      var anyForbidden = false;
+      for(var si=0; si<slot.length; si++){
+        if(slot[si] && slot[si].forbidden){ anyForbidden = true; break; }
+      }
+
+      html += '<td class="slot ' + (anyForbidden ? 'cellForbidden' : '') + '">';
+
+      for(var i=0; i<slot.length; i++){
+        var c = slot[i];
+        var badge = '<span class="tag ok">مسموح</span>';
+        if(c.forbidden) badge = '<span class="tag danger">لا يمكن دخول الاختبار</span>';
+        else if(hasConflict && i>0) badge = '<span class="tag warn">مادة أخرى بنفس الوقت</span>';
+
+        html += '<div class="course">'
+             +   '<div class="name">' + esc(c.courseName) + '</div>'
+             +   '<div class="meta">(' + esc(c.courseRef) + ') — ' + esc(c.status) + '</div>'
+             +   badge
+             + '</div>';
+      }
+
+      if(hasConflict){
+        html += '<div class="conflictBox">تنبيه: لديك أكثر من مقرر في نفس الفترة — راجع شؤون المتدربين لتعديل التعارض.</div>';
+      }
+      if(anyForbidden){
+        html += '<div class="denyBox">ملاحظة: يوجد مقرر حالته (حرمان/مطوي قيده) — لا يمكن دخول الاختبار لهذا المقرر.</div>';
+      }
+
+      html += '</td>';
+    }
+
+    html += '</tr>';
+  }
+
+  html += '</tbody></table></div>';
   return html;
 }
 
-/* ====== Admin ====== */
+/* ================== Admin ================== */
 function adminLogin(){
   var pass = document.getElementById("adminPass").value;
   if(pass !== ADMIN_PASSWORD){
-    alert("كلمة المرور غير صحيحة");
+    toast('كلمة المرور غير صحيحة', 2400);
     return;
   }
   document.getElementById("adminLogin").style.display = "none";
   document.getElementById("adminArea").style.display = "block";
-  document.getElementById("logsArea").innerHTML = '<div class="small">جاهز. اضغط "تحديث" لجلب السجلات.</div>';
+  document.getElementById("logsArea").innerHTML = '<div class="note">جاهز. اضغط “تحديث السجلات”.</div>';
+  toast('تم الدخول للوحة المدير', 1600);
 }
 
 function adminLogout(){
@@ -276,19 +599,24 @@ function adminLogout(){
   document.getElementById("adminLogin").style.display = "block";
   document.getElementById("adminArea").style.display = "none";
   document.getElementById("apiStatus").innerText = "";
-  document.getElementById("statsBox").innerText = 'اضغط "تحديث السجلات"';
+  document.getElementById("statsBox").innerText = "اضغط “تحديث السجلات” لعرض الإحصائيات.";
   document.getElementById("logsArea").innerHTML = "";
+  toast('تم تسجيل الخروج', 1600);
 }
 
 async function testAPI(){
   var box = document.getElementById("apiStatus");
-  box.innerText = "جاري الاختبار...";
+  box.innerHTML = 'جاري الاختبار…';
   try{
     var data = await callLogs(1);
-    if(data && data.ok) box.innerText = "✔ الاتصال يعمل + الصلاحيات سليمة";
-    else box.innerText = "✖ فشل: " + (data.message || "Unknown");
+    if(data && data.ok){
+      box.innerHTML = '✅ الاتصال يعمل + الصلاحيات سليمة';
+      toast('API يعمل', 1600);
+    } else {
+      box.innerHTML = '❌ فشل: ' + esc(data.message || "Unknown");
+    }
   }catch(err){
-    box.innerText = "✖ فشل الاتصال";
+    box.innerHTML = '❌ فشل الاتصال';
   }
 }
 
@@ -300,20 +628,21 @@ async function loadLogs(){
   if(isNaN(limit) || limit < 1) limit = 50;
   if(limit > 200) limit = 200;
 
-  area.innerHTML = "جاري تحميل السجلات...";
+  area.innerHTML = '<div class="note">جاري تحميل السجلات…</div>';
+
   try{
     var data = await callLogs(limit);
     if(!data.ok){
-      area.innerHTML = '<div class="no-data">' + esc(data.message || "فشل تحميل السجلات") + '</div>';
+      area.innerHTML = '<div class="infoCard"><div class="denyBox">' + esc(data.message || "فشل تحميل السجلات") + '</div></div>';
       return;
     }
 
     if(data.stats){
       statsBox.innerHTML =
-        'إجمالي السجلات: <b>' + esc(data.stats.total) + '</b><br>' +
-        'OK: <b>' + esc(data.stats.ok) + '</b> — NOT_FOUND: <b>' + esc(data.stats.notFound) + '</b><br>' +
-        'DENY_ORIGIN: <b>' + esc(data.stats.denyOrigin) + '</b> — DENY_TOKEN: <b>' + esc(data.stats.denyToken) + '</b><br>' +
-        'DENY_RATE: <b>' + esc(data.stats.denyRate) + '</b> — BAD_REQUEST: <b>' + esc(data.stats.badRequest) + '</b>';
+        'إجمالي السجلات: <span class="pill">' + esc(data.stats.total) + '</span><br>' +
+        'OK: <span class="pill">' + esc(data.stats.ok) + '</span> — NOT_FOUND: <span class="pill">' + esc(data.stats.notFound) + '</span><br>' +
+        'DENY_ORIGIN: <span class="pill">' + esc(data.stats.denyOrigin) + '</span> — DENY_TOKEN: <span class="pill">' + esc(data.stats.denyToken) + '</span><br>' +
+        'DENY_RATE: <span class="pill">' + esc(data.stats.denyRate) + '</span> — BAD_REQUEST: <span class="pill">' + esc(data.stats.badRequest) + '</span>';
     } else {
       statsBox.innerText = "لا توجد إحصائيات";
     }
@@ -321,30 +650,34 @@ async function loadLogs(){
     var headers = data.headers || [];
     var rows = data.rows || [];
 
-    var html = '<table class="logtable"><thead><tr>';
+    if(rows.length === 0){
+      area.innerHTML = '<div class="infoCard"><div class="denyBox">لا توجد سجلات.</div></div>';
+      return;
+    }
+
+    var html = '<div class="tableWrap"><table>'
+             + '<thead><tr>';
+
     for(var i=0; i<headers.length; i++){
       html += '<th>' + esc(headers[i]) + '</th>';
     }
     html += '</tr></thead><tbody>';
 
-    if(rows.length === 0){
-      html += '<tr><td colspan="' + (headers.length || 6) + '">لا توجد سجلات.</td></tr>';
-    } else {
-      // الأحدث أولاً
-      for(var r=rows.length-1; r>=0; r--){
-        html += '<tr>';
-        for(var c=0; c<headers.length; c++){
-          html += '<td>' + esc(rows[r][c]) + '</td>';
-        }
-        html += '</tr>';
+    // الأحدث أولاً
+    for(var r=rows.length-1; r>=0; r--){
+      html += '<tr>';
+      for(var c=0; c<headers.length; c++){
+        html += '<td style="font-size:12px;color:rgba(255,255,255,.85)">' + esc(rows[r][c]) + '</td>';
       }
+      html += '</tr>';
     }
 
-    html += '</tbody></table>';
+    html += '</tbody></table></div>';
     area.innerHTML = html;
 
+    toast('تم تحديث السجلات', 1600);
   }catch(err){
-    area.innerHTML = '<div class="no-data">فشل تحميل السجلات. تأكد من Deploy → Update في Apps Script.</div>';
+    area.innerHTML = '<div class="infoCard"><div class="denyBox">فشل تحميل السجلات. تأكد من Deploy → Update في Apps Script.</div></div>';
   }
 }
 
@@ -353,5 +686,6 @@ document.getElementById("traineeId").addEventListener("keyup", function(e){
   if(e.key === "Enter") searchTrainee();
 });
 </script>
+
 </body>
 </html>
