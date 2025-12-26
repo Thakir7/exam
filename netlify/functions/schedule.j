@@ -1,9 +1,10 @@
-export async function handler(event) {
-  const id = (event.queryStringParameters?.id || "").trim();
+exports.handler = async (event) => {
+  const id = (event.queryStringParameters && event.queryStringParameters.id || "").trim();
+
   if (!id) {
     return {
       statusCode: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({ ok:false, message:"أرسل id مثل ?id=123" })
     };
   }
@@ -12,21 +13,23 @@ export async function handler(event) {
 
   try {
     const res = await fetch(`${SCRIPT_URL}?id=${encodeURIComponent(id)}`);
-    const data = await res.json();
+    const text = await res.text();
+    const data = JSON.parse(text);
 
     return {
       statusCode: 200,
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
+        "Content-Type": "application/json; charset=utf-8",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-store"
       },
       body: JSON.stringify(data)
     };
   } catch (e) {
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({ ok:false, message:"فشل الاتصال بالخادم" })
     };
   }
-}
+};
