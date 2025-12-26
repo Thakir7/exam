@@ -22,60 +22,124 @@
   }
 
   body{font-family:Tahoma,Arial;background:var(--bg);margin:0;color:var(--text)}
-  .container{max-width:1100px;margin:28px auto;background:var(--card);padding:22px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,.07)}
-  h1{margin:0 0 14px;text-align:center}
+  .container{
+    max-width:1200px;
+    margin:26px auto;
+    background:var(--card);
+    padding:22px;
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,.07)
+  }
 
-  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+  /* Header */
+  .header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:12px 4px 18px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:240px;
+  }
+  .logo{
+    width:54px;height:54px;
+    border-radius:14px;
+    background:#f1f5f9;
+    border:1px solid var(--stroke);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .brandText .t1{font-weight:900;font-size:16px}
+  .brandText .t2{color:var(--muted);font-size:12px;margin-top:2px}
+  .titleBox{
+    flex:1;
+    text-align:center;
+  }
+  .titleBox h1{margin:0;font-size:30px}
+  .titleBox .sub{margin-top:6px;color:var(--muted);font-size:13px}
+
+  /* Search */
+  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:12px 0}
   input,button{padding:12px 14px;border-radius:12px;border:1px solid var(--stroke);font-size:15px}
-  input{min-width:320px;max-width:520px;width:70%}
+  input{min-width:320px;max-width:620px;width:70%}
   button.primary{background:var(--primary);color:#fff;border:none;cursor:pointer}
   button.primary:hover{opacity:.92}
 
+  /* info cards */
   .info{background:#f8fafc;padding:12px 14px;border-radius:14px;border:1px solid var(--stroke);margin-top:12px}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
   .infoBox{background:#fff;border:1px solid var(--stroke);border-radius:14px;padding:12px 14px}
   .infoLabel{color:var(--muted);font-size:12px;margin-bottom:4px}
-  .infoValue{font-weight:800;font-size:18px}
+  .infoValue{font-weight:900;font-size:18px}
 
-  .no-data{background:#fef2f2;color:#991b1b;padding:12px 14px;border-radius:14px;border:1px solid #fecaca;margin-top:12px;white-space:pre-line}
+  .no-data{
+    background:#fef2f2;color:#991b1b;
+    padding:12px 14px;border-radius:14px;
+    border:1px solid #fecaca;margin-top:12px;
+    white-space:pre-line;text-align:center;
+    font-weight:800;
+  }
 
-  table{width:100%;border-collapse:separate;border-spacing:0;margin-top:14px;font-size:14px;border:1px solid var(--stroke);border-radius:16px;overflow:hidden}
-  th,td{border-bottom:1px solid var(--stroke);border-left:1px solid var(--stroke);padding:12px;text-align:center;vertical-align:top}
+  /* Table */
+  table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    margin-top:14px;
+    font-size:14px;
+    border:1px solid var(--stroke);
+    border-radius:16px;
+    overflow:hidden
+  }
+  th,td{
+    border-bottom:1px solid var(--stroke);
+    border-left:1px solid var(--stroke);
+    padding:12px;
+    text-align:center;
+    vertical-align:top
+  }
   tr:last-child td{border-bottom:none}
   th:last-child, td:last-child{border-left:none}
-  th{background:#f9fafb;font-weight:900}
+  th{
+    background:#f9fafb;
+    font-weight:900
+  }
+  .time{display:block;font-size:12px;color:var(--muted);margin-top:4px}
 
-  /* تظليل الأعمدة حسب الفترة */
+  /* period shading */
   th.p1, td.p1{background:var(--p1)}
   th.p2, td.p2{background:var(--p2)}
 
-  /* إطار كامل لكل فترة */
+  /* outer frame for each period */
   td.p1, td.p2{position:relative}
   td.p1::after, td.p2::after{
     content:"";
     position:absolute;
     inset:6px;
-    border:1px dashed rgba(0,0,0,.12);
+    border:1px dashed rgba(0,0,0,.15);
     border-radius:14px;
     pointer-events:none;
   }
 
-  /* بطاقة المادة داخل الخلية (مصغّرة) */
+  /* course card inside cell - smaller */
   .courseCard{
     background:#ffffffcc;
-    border:1px solid rgba(0,0,0,.10);
+    border:1px solid rgba(0,0,0,.12);
     border-radius:12px;
-    padding:8px 10px;            /* ✅ تصغير */
+    padding:8px 10px;
     margin:6px auto;
-    max-width:240px;             /* ✅ تصغير */
+    max-width:230px;
     text-align:right;
     box-shadow:0 4px 12px rgba(0,0,0,.04);
   }
-
   .courseTitle{font-weight:900;font-size:13px;margin-bottom:4px}
-  .courseMeta{color:var(--muted);font-size:12px;line-height:1.5}
+  .courseMeta{color:var(--muted);font-size:12px;line-height:1.45}
 
-  .forbidden{
+  .courseCard.forbidden{
     border-color:#fecaca;
     background:#fff1f2;
   }
@@ -88,21 +152,45 @@
     text-align:center;
   }
 
-  .hint{color:var(--muted);font-size:12px;text-align:center;margin-top:10px}
+  .noExamDay{
+    color:#6b7280;
+    font-weight:900;
+    font-size:13px;
+    padding:18px 8px;
+  }
+
   .footer{color:var(--muted);font-size:12px;text-align:center;margin-top:16px}
 </style>
 </head>
 
 <body>
 <div class="container">
-  <h1>بوابة الاستعلام عن جدول الاختبارات</h1>
 
+  <!-- ===== Header ===== -->
+  <div class="header">
+    <div class="brand">
+      <div class="logo">
+        <!-- ضع شعارك هنا (اختياري): <img src="logo.png" style="width:100%;height:100%;object-fit:contain"> -->
+      </div>
+      <div class="brandText">
+        <div class="t1">TVTC</div>
+        <div class="t2">الكلية التقنية بالفرشة</div>
+      </div>
+    </div>
+
+    <div class="titleBox">
+      <h1>بوابة الاستعلام عن جدول الاختبارات</h1>
+      <div class="sub">عرض الفترتين (الأولى والثانية) — مع تمييز اختلاف الألوان</div>
+    </div>
+
+    <div style="min-width:240px"></div>
+  </div>
+
+  <!-- ===== Search ===== -->
   <div class="row">
     <input id="traineeId" placeholder="أدخل الرقم التدريبي" />
     <button class="primary" onclick="searchTrainee()">بحث</button>
   </div>
-
-  <div class="hint">✅ تم حذف الفترة الثالثة – سيتم عرض فترتين فقط (الأولى والثانية) مع تظليل مختلف</div>
 
   <div id="studentResult"></div>
 
@@ -110,7 +198,7 @@
 </div>
 
 <script>
-/* ✅ ضع مسار Netlify Function عندك */
+/* ✅ ضع مسار Netlify Function */
 const API_URL = "/.netlify/functions/schedule";
 
 function esc(s){
@@ -146,7 +234,7 @@ async function searchTrainee(){
 }
 
 function renderCell(slot){
-  if(!slot || slot.length === 0) return "-";
+  if(!slot || slot.length === 0) return "";
 
   const hasConflict = slot.length > 1;
   const anyForbidden = slot.some(c => !!c.forbidden);
@@ -154,10 +242,9 @@ function renderCell(slot){
   let html = "";
   slot.forEach((c, idx) => {
     const isOther = hasConflict && idx > 0;
-    const cardClass = `courseCard ${c.forbidden ? "forbidden" : ""}`;
 
     html += `
-      <div class="${cardClass}" style="${isOther ? "border-color:#fca5a5" : ""}">
+      <div class="courseCard ${c.forbidden ? "forbidden" : ""}" style="${isOther ? "border-color:#fca5a5" : ""}">
         <div class="courseTitle">${esc(c.courseName)}</div>
         <div class="courseMeta">رمز المقرر: <b>${esc(c.courseRef || "")}</b></div>
         <div class="courseMeta">الحالة: ${esc(c.status || "")}</div>
@@ -176,6 +263,8 @@ function renderCell(slot){
 }
 
 function renderScheduleTable(data){
+  const days = Array.isArray(data.days) ? data.days : [];
+
   let html = `
     <div class="info">
       <div class="grid2">
@@ -194,30 +283,33 @@ function renderScheduleTable(data){
       <thead>
         <tr>
           <th>اليوم</th>
-          <th class="p1">الفترة الأولى<br><span style="color:var(--muted);font-size:12px">8:30 إلى 10:00</span></th>
-          <th class="p2">الفترة الثانية<br><span style="color:var(--muted);font-size:12px">10:30 إلى 12:00</span></th>
+          <th class="p1">الفترة الأولى<span class="time">8:30 إلى 10:00</span></th>
+          <th class="p2">الفترة الثانية<span class="time">10:30 إلى 12:00</span></th>
         </tr>
       </thead>
       <tbody>
   `;
 
-  const days = Array.isArray(data.days) ? data.days : [];
   if(days.length === 0){
     html += `<tr><td colspan="3">لا يوجد جدول اختبارات لهذا المتدرب.</td></tr>`;
-  }else{
-    days.forEach(d=>{
-      const p1 = (d.periods && d.periods["1"]) ? d.periods["1"] : [];
-      const p2 = (d.periods && d.periods["2"]) ? d.periods["2"] : [];
-
-      html += `
-        <tr>
-          <td style="font-weight:900;background:#fff">${esc(d.dayLabel)}</td>
-          <td class="p1">${renderCell(p1)}</td>
-          <td class="p2">${renderCell(p2)}</td>
-        </tr>
-      `;
-    });
+    html += `</tbody></table>`;
+    return html;
   }
+
+  days.forEach(d=>{
+    const p1 = (d.periods && d.periods["1"]) ? d.periods["1"] : [];
+    const p2 = (d.periods && d.periods["2"]) ? d.periods["2"] : [];
+
+    const hasAny = (p1.length > 0) || (p2.length > 0);
+
+    html += `
+      <tr>
+        <td style="font-weight:900;background:#fff">${esc(d.dayLabel)}</td>
+        <td class="p1">${p1.length ? renderCell(p1) : (hasAny ? "-" : `<div class="noExamDay">لا يوجد اختبار</div>`)}</td>
+        <td class="p2">${p2.length ? renderCell(p2) : (hasAny ? "-" : `<div class="noExamDay">لا يوجد اختبار</div>`)}</td>
+      </tr>
+    `;
+  });
 
   html += `</tbody></table>`;
   return html;
