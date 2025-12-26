@@ -4,391 +4,557 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>بوابة الاستعلام عن جدول الاختبارات</title>
+
 <style>
   :root{
     --bg1:#f7fbff;
-    --bg2:#eef5ff;
-    --card:#ffffffcc;
+    --bg2:#f2f7ff;
+    --card:#ffffff;
     --text:#0f172a;
     --muted:#64748b;
     --primary:#2563eb;
     --primary2:#1d4ed8;
+    --border:#e5e7eb;
+    --soft:#f8fafc;
     --danger:#dc2626;
     --danger2:#b91c1c;
-    --border:#e5e7eb;
-    --shadow:0 18px 45px rgba(2,6,23,.10);
-    --radius:18px;
+    --warn:#f59e0b;
+    --shadow: 0 20px 50px rgba(2, 8, 23, .10);
+    --shadow2: 0 10px 25px rgba(2, 8, 23, .08);
+    --radius: 18px;
   }
+
+  *{box-sizing:border-box}
   body{
     margin:0;
-    font-family:Tahoma,Arial,sans-serif;
+    font-family: Tahoma, Arial, sans-serif;
     color:var(--text);
-    background: radial-gradient(1200px 600px at 20% 10%, #dbeafe 0%, transparent 55%),
-                radial-gradient(900px 500px at 80% 0%, #e0f2fe 0%, transparent 55%),
-                linear-gradient(180deg, var(--bg2), var(--bg1));
+    background: radial-gradient(1200px 500px at 20% 0%, #eaf2ff 0%, transparent 60%),
+                radial-gradient(1200px 500px at 80% 0%, #eef6ff 0%, transparent 60%),
+                linear-gradient(180deg, var(--bg1), var(--bg2));
     min-height:100vh;
   }
-  .wrap{
-    max-width:1180px;
-    margin:26px auto;
-    padding:0 14px;
+
+  .container{
+    width:min(1200px, 94%);
+    margin: 22px auto 34px;
   }
+
   .topbar{
-    background:var(--card);
+    background: rgba(255,255,255,.75);
     backdrop-filter: blur(10px);
-    border:1px solid #ffffff80;
-    box-shadow:var(--shadow);
-    border-radius:22px;
-    padding:18px 18px;
+    border: 1px solid rgba(229,231,235,.8);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 18px 18px;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:14px;
+    gap: 14px;
   }
+
   .brand{
     display:flex;
-    gap:12px;
     align-items:center;
+    gap: 14px;
+    min-width: 280px;
   }
+
   .logo{
     width:56px;height:56px;
     border-radius:16px;
-    background:linear-gradient(135deg,#e0f2fe,#dbeafe);
-    border:1px solid #ffffff;
+    background: #f1f5ff;
+    border: 1px solid rgba(37,99,235,.18);
     display:flex;
     align-items:center;
     justify-content:center;
-    font-weight:800;
-    color:#0b3ea8;
+    overflow:hidden;
   }
-  .title h1{
+  .logo img{width:100%;height:100%;object-fit:contain;padding:8px}
+
+  .titlewrap{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .titlewrap h1{
     margin:0;
-    font-size:22px;
+    font-size: 20px;
     letter-spacing:.2px;
   }
-  .title .sub{
-    margin-top:4px;
-    font-size:13px;
-    color:var(--muted);
+  .titlewrap .sub{
+    margin:0;
+    font-size: 12px;
+    color: var(--muted);
   }
-  .pills{
+
+  .pillrow{
     display:flex;
-    gap:10px;
     flex-wrap:wrap;
+    gap:10px;
     justify-content:flex-start;
   }
   .pill{
-    border:1px solid var(--border);
-    background:#fff;
-    padding:8px 12px;
-    border-radius:999px;
-    font-size:13px;
-    color:#1f2937;
-  }
-
-  .card{
-    margin-top:18px;
-    background:var(--card);
-    border:1px solid #ffffff80;
-    backdrop-filter: blur(10px);
-    box-shadow:var(--shadow);
-    border-radius:var(--radius);
-    padding:18px;
-  }
-
-  .row{
+    background:#f8fbff;
+    border:1px solid rgba(37,99,235,.15);
+    color:#1e40af;
+    padding:10px 12px;
+    border-radius: 999px;
+    font-size: 12px;
     display:flex;
-    gap:12px;
+    align-items:center;
+    gap:8px;
+    white-space:nowrap;
+  }
+  .pill b{color:#0f172a}
+
+  .main{
+    margin-top: 16px;
+    background: rgba(255,255,255,.72);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(229,231,235,.8);
+    border-radius: 22px;
+    box-shadow: var(--shadow2);
+    padding: 18px;
+  }
+
+  .tabs{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-bottom: 12px;
+  }
+  .tabbtn{
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background:#fff;
+    cursor:pointer;
+    font-size: 14px;
+    transition: .15s;
+  }
+  .tabbtn.active{
+    background: var(--primary);
+    border-color: var(--primary);
+    color:#fff;
+  }
+
+  .panel{display:none}
+  .panel.active{display:block}
+
+  .searchbar{
+    display:flex;
+    gap: 10px;
     align-items:center;
     justify-content:center;
     flex-wrap:wrap;
+    margin-top: 6px;
   }
-  input{
-    width:min(720px, 92vw);
-    padding:14px 14px;
-    border-radius:16px;
-    border:1px solid var(--border);
-    font-size:16px;
+  .input{
+    width:min(520px, 100%);
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    font-size: 16px;
     outline:none;
+    background:#fff;
   }
-  input:focus{ border-color:#93c5fd; box-shadow:0 0 0 4px rgba(59,130,246,.12); }
   .btn{
-    padding:12px 16px;
-    border-radius:14px;
-    border:none;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: none;
     cursor:pointer;
-    font-size:15px;
-    font-weight:700;
-    background:var(--primary);
-    color:#fff;
+    font-size: 15px;
+    transition: .15s;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
   }
-  .btn:hover{ background:var(--primary2); }
-  .hint{
-    text-align:center;
-    margin-top:10px;
-    color:var(--muted);
-    font-size:13px;
-  }
-
-  .info{
-    margin-top:14px;
-    background:linear-gradient(180deg,#eff6ff,#ffffff);
-    border:1px solid #dbeafe;
-    padding:14px;
-    border-radius:16px;
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    justify-content:space-between;
-  }
-  .info .box{
-    flex:1;
-    min-width:240px;
+  .btn.primary{background: var(--primary); color:#fff;}
+  .btn.primary:hover{background: var(--primary2);}
+  .btn.ghost{
     background:#fff;
     border:1px solid var(--border);
-    border-radius:14px;
-    padding:12px;
+    color: var(--text);
   }
-  .info .label{ font-size:12px; color:var(--muted); }
-  .info .value{ font-size:18px; font-weight:800; margin-top:6px; }
+  .btn.danger{background: var(--danger); color:#fff;}
+  .btn.danger:hover{background: var(--danger2);}
+
+  .hint{
+    text-align:center;
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .alert{
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid;
+    white-space: pre-line;
+    font-size: 14px;
+  }
+  .alert.info{
+    background: #eff6ff;
+    border-color: rgba(37,99,235,.25);
+    color: #1e40af;
+  }
+  .alert.error{
+    background:#fef2f2;
+    border-color: rgba(220,38,38,.35);
+    color:#991b1b;
+  }
+
+  .cards{
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .card{
+    border:1px solid var(--border);
+    background:#fff;
+    border-radius: 18px;
+    padding: 14px;
+  }
+  .card .k{color:var(--muted);font-size:12px;margin-bottom:6px}
+  .card .v{font-size:18px;font-weight:800}
 
   table{
     width:100%;
-    border-collapse:separate;
-    border-spacing:0;
-    margin-top:14px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 12px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius: 18px;
     overflow:hidden;
-    border-radius:16px;
-    border:1px solid var(--border);
-    background:#fff;
   }
-  th,td{
-    padding:12px 10px;
-    text-align:center;
+  thead th{
+    background:#f8fafc;
+    padding: 12px 10px;
     border-bottom:1px solid var(--border);
-    vertical-align:top;
-    font-size:14px;
+    font-size: 13px;
   }
-  th{
-    background:#f8fafc;
-    font-weight:800;
-  }
-  tr:last-child td{ border-bottom:none; }
-  td.day{
-    font-weight:800;
-    background:#f8fafc;
-    width:160px;
-  }
-  .slot{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    align-items:center;
-  }
-  .course{
-    width:100%;
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:10px 10px;
-    background:#fff;
-  }
-  .course .name{ font-weight:800; }
-  .course .status{ font-size:12px; color:var(--muted); margin-top:4px; }
-  .forbidden{
-    border-color:#fecaca;
-    background:#fff1f2;
-  }
-  .forbidden .status{ color:#991b1b; font-weight:800; }
-  .conflictNote{
-    margin-top:8px;
-    font-size:12px;
-    font-weight:900;
-    color:#b91c1c;
-  }
-  .nodata{
-    margin-top:14px;
-    background:#fff1f2;
-    border:1px solid #fecaca;
-    color:#991b1b;
-    padding:12px;
-    border-radius:14px;
+  tbody td{
+    padding: 10px 10px;
+    border-bottom:1px solid var(--border);
+    font-size: 13px;
     text-align:center;
-    font-weight:800;
-    white-space:pre-line;
+    vertical-align: middle;
   }
+  tbody tr:last-child td{border-bottom:none}
+  .time{
+    display:block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+    font-weight: 400;
+  }
+
+  .cell{
+    text-align:right;
+  }
+
+  .coursebox{
+    border:1px dashed rgba(148,163,184,.8);
+    border-radius: 12px;
+    padding: 8px 10px;
+    margin: 6px 0;
+    background: #ffffff;
+  }
+  .coursebox .name{font-weight:800}
+  .coursebox .meta{font-size:12px;color:var(--muted);margin-top:2px}
+
+  .forbiddenCell{
+    background: #fff5f5;
+  }
+  .otherConflict{
+    border-color: rgba(220,38,38,.55) !important;
+    background: #fff1f2;
+  }
+  .conflictNote{
+    margin-top: 6px;
+    font-size: 12px;
+    color: #b91c1c;
+    font-weight: 800;
+  }
+  .forbidNote{
+    margin-top: 6px;
+    font-size: 12px;
+    color: #991b1b;
+    font-weight: 800;
+  }
+
   .footer{
     text-align:center;
-    margin:18px 0 8px;
-    color:var(--muted);
-    font-size:12px;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 14px;
+  }
+
+  @media (max-width:560px){
+    .titlewrap h1{font-size:16px}
+    .logo{width:48px;height:48px}
+    .tabbtn{font-size:13px}
   }
 </style>
 </head>
+
 <body>
-  <div class="wrap">
+  <div class="container">
+
+    <!-- Top bar -->
     <div class="topbar">
       <div class="brand">
-        <div class="logo">TVTC</div>
-        <div class="title">
+        <div class="logo" title="TVTC">
+          <!-- ضع رابط شعارك هنا (اختياري) -->
+          <!-- إذا ما عندك شعار اتركه، سيظهر مربع لطيف -->
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/TVTC_logo.png/240px-TVTC_logo.png"
+               alt="TVTC"
+               onerror="this.style.display='none'; this.parentElement.style.background='#eef2ff';" />
+        </div>
+        <div class="titlewrap">
           <h1>بوابة الاستعلام عن جدول الاختبارات</h1>
-          <div class="sub">الكلية التقنية بالفرشة — بيانات من Google Sheets عبر Apps Script</div>
+          <p class="sub">الكلية التقنية بالفرشة — المؤسسة العامة للتدريب التقني والمهني</p>
         </div>
       </div>
-      <div class="pills">
-        <div class="pill">المؤسسة: TVTC</div>
-        <div class="pill">التشغيل: GitHub Pages</div>
+
+      <div class="pillrow">
+        <div class="pill">المؤسسة: <b>TVTC</b></div>
+        <div class="pill">البيانات: <b>من Google Sheet عبر Netlify Function</b></div>
+        <div class="pill">التشغيل: <b>Thakir Alqasem</b></div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="row">
-        <input id="traineeId" placeholder="أدخل الرقم التدريبي" inputmode="numeric" />
-        <button class="btn" onclick="searchTrainee()">بحث</button>
+    <!-- Main -->
+    <div class="main">
+
+      <div class="tabs">
+        <button id="tabStudent" class="tabbtn active" onclick="setTab('student')">وضع المتدرب</button>
+        <button id="tabAdmin" class="tabbtn" onclick="setTab('admin')">لوحة المدير</button>
       </div>
-      <div class="hint">ملاحظة: إذا كانت حالة المقرر (حرمان/مطوي قيده) سيظهر تنبيه بعدم دخول الاختبار.</div>
 
-      <div id="studentResult"></div>
+      <!-- Student Panel -->
+      <div id="panelStudent" class="panel active">
+        <div class="searchbar">
+          <input id="traineeId" class="input" inputmode="numeric" placeholder="أدخل الرقم التدريبي" />
+          <button class="btn primary" onclick="searchTrainee()">بحث</button>
+          <button class="btn ghost" onclick="resetStudent()">مسح</button>
+        </div>
+        <div class="hint">في حال وجود تعارض (مادتين بنفس الفترة) سيتم تمييز المقرر الآخر باللون الأحمر.</div>
 
-      <div class="footer">إذا واجهت عدم ظهور نتيجة، حدّث الصفحة (Ctrl+F5) بعد تحديث Deploy في Apps Script.</div>
+        <div id="studentResult"></div>
+      </div>
+
+      <!-- Admin Panel (اختياري محلي فقط) -->
+      <div id="panelAdmin" class="panel">
+        <div id="adminLogin" class="searchbar" style="justify-content:center">
+          <input id="adminPass" class="input" type="password" placeholder="كلمة مرور المدير" />
+          <button class="btn primary" onclick="adminLogin()">دخول</button>
+        </div>
+
+        <div id="adminArea" style="display:none">
+          <div class="alert info">لوحة المدير محلية داخل الصفحة (ليست نظام صلاحيات حقيقي). إذا تبغى صلاحيات حقيقية نربطها بتسجيل دخول في Netlify/خادم.</div>
+
+          <div class="cards">
+            <div class="card">
+              <div class="k">اختبار API</div>
+              <button class="btn primary" onclick="testAPI()">اختبار</button>
+              <div id="apiStatus" class="k" style="margin-top:8px"></div>
+            </div>
+
+            <div class="card">
+              <div class="k">الخروج</div>
+              <button class="btn danger" onclick="adminLogout()">تسجيل خروج</button>
+            </div>
+          </div>
+
+          <div id="adminBox" style="margin-top:12px"></div>
+        </div>
+      </div>
+
+      <div class="footer">
+        ملاحظة: صفحة GitHub/Netlify لا يمكن “إخفاء الكود” بالكامل—لكن تم إخفاء رابط Google خلف Function لحماية الوصول وتقليل المشاكل.
+      </div>
+
     </div>
   </div>
 
 <script>
+/* ====== إعدادات API (Netlify Function) ====== */
 const API_URL = "/.netlify/functions/schedule";
 
+/* كلمة مرور لوحة المدير (محلية داخل الصفحة) */
+const ADMIN_PASSWORD = "admin@1447";
+
+/* ====== Helpers ====== */
 function esc(s){
   return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-function jsonp(url){
-  return new Promise((resolve, reject) => {
-    const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random()*100000);
-    const script = document.createElement("script");
-    const sep = url.includes("?") ? "&" : "?";
+function setTab(tab){
+  document.getElementById("tabStudent").classList.toggle("active", tab==="student");
+  document.getElementById("tabAdmin").classList.toggle("active", tab==="admin");
+  document.getElementById("panelStudent").classList.toggle("active", tab==="student");
+  document.getElementById("panelAdmin").classList.toggle("active", tab==="admin");
+}
 
-    window[cb] = (data) => {
-      try { resolve(data); }
-      finally {
-        delete window[cb];
-        script.remove();
-      }
-    };
+/* ====== API ====== */
+async function callSchedule(id){
+  const res = await fetch(`${API_URL}?id=${encodeURIComponent(id)}`, { cache: "no-store" });
+  return await res.json();
+}
 
-    script.onerror = () => {
-      delete window[cb];
-      script.remove();
-      reject(new Error("JSONP failed"));
-    };
-
-    script.src = url + sep + "callback=" + encodeURIComponent(cb);
-    document.body.appendChild(script);
-  });
+/* ====== Student ====== */
+function resetStudent(){
+  document.getElementById("traineeId").value = "";
+  document.getElementById("studentResult").innerHTML = "";
+  document.getElementById("traineeId").focus();
 }
 
 async function searchTrainee(){
   const id = document.getElementById("traineeId").value.trim();
   const box = document.getElementById("studentResult");
-  box.innerHTML = "جاري البحث...";
+  box.innerHTML = `<div class="alert info">جاري البحث...</div>`;
 
   if(!id){
-    box.innerHTML = `<div class="nodata">من فضلك أدخل الرقم التدريبي</div>`;
+    box.innerHTML = `<div class="alert error">من فضلك أدخل الرقم التدريبي</div>`;
     return;
   }
 
   try{
-    const data = await jsonp(`${API_URL}?id=${encodeURIComponent(id)}`);
+    const data = await callSchedule(id);
 
     if(!data || !data.ok){
-      box.innerHTML = `<div class="nodata">${esc((data && data.message) || "لا توجد بيانات")}</div>`;
+      box.innerHTML = `<div class="alert error">${esc(data?.message || "تعذر جلب البيانات")}</div>`;
       return;
     }
 
-    box.innerHTML = renderScheduleTable(data);
-
-  }catch(err){
-    box.innerHTML = `<div class="nodata">
-فشل الاتصال بالخادم.
-- تأكد أن رابط API_URL صحيح (exec)
-- تأكد Deploy: Who has access = Anyone
-- حدّث الصفحة Ctrl+F5
-</div>`;
+    box.innerHTML = renderSchedule(data);
+  }catch(e){
+    box.innerHTML = `<div class="alert error">فشل الاتصال بالخادم. تأكد أن Function تعمل في Netlify.</div>`;
   }
 }
 
-function renderScheduleTable(data){
+function renderSchedule(data){
+  const traineeName = data.traineeName ?? "";
+  const traineeId   = data.traineeId ?? "";
   const days = Array.isArray(data.days) ? data.days : [];
 
   let html = `
-    <div class="info">
-      <div class="box">
-        <div class="label">اسم المتدرب</div>
-        <div class="value">${esc(data.traineeName)}</div>
+    <div class="cards">
+      <div class="card">
+        <div class="k">اسم المتدرب</div>
+        <div class="v">${esc(traineeName)}</div>
       </div>
-      <div class="box">
-        <div class="label">الرقم التدريبي</div>
-        <div class="value">${esc(data.traineeId)}</div>
+      <div class="card">
+        <div class="k">الرقم التدريبي</div>
+        <div class="v">${esc(traineeId)}</div>
       </div>
     </div>
   `;
-
-  if(days.length === 0){
-    html += `<div class="nodata">لا يوجد جدول اختبارات لهذا المتدرب.</div>`;
-    return html;
-  }
 
   html += `
     <table>
       <thead>
         <tr>
           <th>اليوم</th>
-          <th>الفترة الأولى <div style="font-size:12px;color:#64748b;margin-top:4px;">8:30 إلى 10:00</div></th>
-          <th>الفترة الثانية <div style="font-size:12px;color:#64748b;margin-top:4px;">10:30 إلى 12:00</div></th>
-          <th>الفترة الثالثة <div style="font-size:12px;color:#64748b;margin-top:4px;">12:00 إلى 12:30</div></th>
+          <th>الفترة الأولى<span class="time">8:30 إلى 10:00</span></th>
+          <th>الفترة الثانية<span class="time">10:30 إلى 12:00</span></th>
+          <th>الفترة الثالثة<span class="time">12:00 إلى 12:30</span></th>
         </tr>
       </thead>
       <tbody>
   `;
 
-  days.forEach(d=>{
-    html += `<tr>`;
-    html += `<td class="day">${esc(d.dayLabel)}</td>`;
+  if(days.length === 0){
+    html += `<tr><td colspan="4">لا يوجد جدول اختبارات لهذا المتدرب.</td></tr>`;
+  }else{
+    for(const d of days){
+      html += `<tr>`;
+      html += `<td style="font-weight:800">${esc(d.dayLabel || "")}</td>`;
 
-    [1,2,3].forEach(p=>{
-      const slot = (d.periods && d.periods[p]) ? d.periods[p] : [];
-      if(!slot.length){
-        html += `<td>-</td>`;
-        return;
+      for(const p of [1,2,3]){
+        const slot = d?.periods?.[p] || [];
+        if(!slot || slot.length === 0){
+          html += `<td>-</td>`;
+          continue;
+        }
+
+        const hasConflict = slot.length > 1;
+        const anyForbidden = slot.some(x => !!x.forbidden);
+
+        html += `<td class="cell ${anyForbidden ? 'forbiddenCell':''}">`;
+
+        slot.forEach((c, idx) => {
+          const isOther = hasConflict && idx > 0; // المادة الأخرى بالأحمر
+          const boxCls = `coursebox ${isOther ? 'otherConflict':''}`;
+          html += `
+            <div class="${boxCls}">
+              <div class="name">${esc(c.courseName || "")}</div>
+              <div class="meta">${esc(c.status || "")}${c.courseRef ? " — ("+esc(c.courseRef)+")" : ""}</div>
+            </div>
+          `;
+        });
+
+        if(hasConflict){
+          html += `<div class="conflictNote">تنبيه: لديك أكثر من مقرر في نفس الفترة — تم تمييز المقرر الآخر بالأحمر</div>`;
+        }
+        if(anyForbidden){
+          html += `<div class="forbidNote">لا يمكن دخول الاختبار لأحد المقررات بسبب (حرمان/مطوي قيده)</div>`;
+        }
+
+        html += `</td>`;
       }
 
-      const hasConflict = slot.length > 1;
-      html += `<td><div class="slot">`;
-
-      slot.forEach((c, idx)=>{
-        const forbidden = !!c.forbidden;
-        html += `
-          <div class="course ${forbidden ? 'forbidden':''}">
-            <div class="name">${esc(c.courseName)}</div>
-            <div class="status">${esc(c.status || '')}${forbidden ? ' — لا يمكن دخول الاختبار' : ''}</div>
-          </div>
-        `;
-      });
-
-      if(hasConflict){
-        html += `<div class="conflictNote">تنبيه: لديك أكثر من مقرر في نفس الفترة.</div>`;
-      }
-
-      html += `</div></td>`;
-    });
-
-    html += `</tr>`;
-  });
+      html += `</tr>`;
+    }
+  }
 
   html += `</tbody></table>`;
   return html;
 }
 
-// Enter = بحث
-document.getElementById("traineeId").addEventListener("keyup", function(e){
+/* ====== Admin (محلي) ====== */
+function adminLogin(){
+  const pass = document.getElementById("adminPass").value;
+  if(pass !== ADMIN_PASSWORD){
+    alert("كلمة المرور غير صحيحة");
+    return;
+  }
+  document.getElementById("adminLogin").style.display = "none";
+  document.getElementById("adminArea").style.display = "block";
+  document.getElementById("apiStatus").innerText = "";
+  document.getElementById("adminBox").innerHTML = "";
+}
+
+function adminLogout(){
+  document.getElementById("adminPass").value = "";
+  document.getElementById("adminLogin").style.display = "flex";
+  document.getElementById("adminArea").style.display = "none";
+}
+
+async function testAPI(){
+  const box = document.getElementById("apiStatus");
+  box.innerText = "جاري الاختبار...";
+  try{
+    const data = await callSchedule("443204035"); // رقم تجريبي
+    if(data && typeof data.ok !== "undefined"){
+      box.innerText = "✔ API تعمل (استجابة صحيحة)";
+      document.getElementById("adminBox").innerHTML =
+        `<div class="alert info"><b>الاستجابة:</b><br>${esc(JSON.stringify(data)).slice(0, 600)}...</div>`;
+    }else{
+      box.innerText = "✖ استجابة غير متوقعة";
+    }
+  }catch(e){
+    box.innerText = "✖ فشل الاتصال";
+  }
+}
+
+/* Enter للبحث */
+document.getElementById("traineeId").addEventListener("keyup", (e)=>{
   if(e.key === "Enter") searchTrainee();
 });
 </script>
