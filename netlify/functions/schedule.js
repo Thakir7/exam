@@ -25,6 +25,14 @@ function norm(s) {
   return String(s ?? "").trim();
 }
 
+// توحيد رمز المقرر: إزالة المسافات والشرطة
+function normalizeCode(code) {
+  return String(code ?? "")
+    .replace(/\s+/g, "")
+    .replace(/-/g, "")
+    .trim();
+}
+
 // Simple CSV parser supporting quoted fields
 function parseCSV(text) {
   const rows = [];
@@ -51,7 +59,7 @@ function parseCSV(text) {
       cur = "";
 
       // ignore completely empty rows
-      if (row.some((c) => norm(c) !== "")) rows.push(row.map(norm));
+      if (row.some((c) => norm(c) !== "")) rows.push(row.map((c) => String(c ?? "").trim()));
       row = [];
     } else {
       cur += ch;
@@ -60,7 +68,7 @@ function parseCSV(text) {
 
   if (cur.length || row.length) {
     row.push(cur);
-    if (row.some((c) => norm(c) !== "")) rows.push(row.map(norm));
+    if (row.some((c) => norm(c) !== "")) rows.push(row.map((c) => String(c ?? "").trim()));
   }
 
   return rows;
@@ -88,7 +96,7 @@ function addPeriod(daysMap, dayLabel, periodNo, code, nameFromExam, traineeCours
 
   periods[periodNo].push({
     courseName: t?.courseName || nameFromExam || code,
-    courseRef: code, // نرجع الرمز هنا
+    courseRef: code, // نرجع الرمز بعد التطبيع
     status: t?.status || "",
     forbidden: !!t?.forbidden,
   });
@@ -130,7 +138,7 @@ exports.handler = async (event) => {
         trainingId,
         name: norm(r[1]),
         status: norm(r[2]),
-        courseCode: norm(r[3]),
+        courseCode: normalizeCode(r[3]), // ✅ تطبيع رمز المقرر
         courseName: norm(r[4]),
         forbidden: isForbiddenStatus(r[2]),
       });
@@ -148,7 +156,7 @@ exports.handler = async (event) => {
     const traineeCourses = mine
       .filter((x) => x.courseCode)
       .map((x) => ({
-        courseCode: x.courseCode,
+        courseCode: x.courseCode, // already normalized
         courseName: x.courseName || x.courseCode,
         status: x.status || "",
         forbidden: !!x.forbidden,
@@ -173,27 +181,26 @@ exports.handler = async (event) => {
 
       // Period 1
       const p1Name = norm(r[1]);
-      const p1Code = norm(r[2]);
+      const p1Code = normalizeCode(r[2]); // ✅ تطبيع
       if (p1Code && codesSet.has(p1Code)) {
         addPeriod(daysMap, dayLabel, 1, p1Code, p1Name, traineeCourses);
       }
 
       // Period 2
       const p2Name = norm(r[3]);
-      const p2Code = norm(r[4]);
+      const p2Code = normalizeCode(r[4]); // ✅ تطبيع
       if (p2Code && codesSet.has(p2Code)) {
         addPeriod(daysMap, dayLabel, 2, p2Code, p2Name, traineeCourses);
       }
 
       // Period 3
       const p3Name = norm(r[5]);
-      const p3Code = norm(r[6]);
+      const p3Code = normalizeCode(r[6]); // ✅ تطبيع
       if (p3Code && codesSet.has(p3Code)) {
         addPeriod(daysMap, dayLabel, 3, p3Code, p3Name, traineeCourses);
       }
     }
 
-    // Sort days by appearance (Map preserves insertion order)
     const days = Array.from(daysMap.entries()).map(([dayLabel, periods]) => ({
       dayLabel,
       periods,
