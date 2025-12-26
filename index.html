@@ -3,704 +3,394 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>بوابة الاستعلام | جدول الاختبارات</title>
-
+<title>بوابة الاستعلام عن جدول الاختبارات</title>
 <style>
   :root{
-    /* Light Theme */
-    --bg:#f6f8fc;
-    --bg2:#ffffff;
-    --card:#ffffff;
-    --card2:#fbfcff;
-    --line:#e6eaf2;
-    --txt:#0f172a;
+    --bg1:#f7fbff;
+    --bg2:#eef5ff;
+    --card:#ffffffcc;
+    --text:#0f172a;
     --muted:#64748b;
-    --brand:#2563eb;
-    --brand2:#60a5fa;
-    --ok:#16a34a;
-    --warn:#f59e0b;
+    --primary:#2563eb;
+    --primary2:#1d4ed8;
     --danger:#dc2626;
-
-    --shadow:0 16px 40px rgba(15,23,42,.10);
+    --danger2:#b91c1c;
+    --border:#e5e7eb;
+    --shadow:0 18px 45px rgba(2,6,23,.10);
     --radius:18px;
   }
-
-  *{box-sizing:border-box}
   body{
     margin:0;
-    font-family:Tahoma,Arial;
-    color:var(--txt);
-    background:
-      radial-gradient(900px 500px at 15% 0%, rgba(96,165,250,.22), transparent 60%),
-      radial-gradient(1000px 600px at 90% -10%, rgba(37,99,235,.14), transparent 55%),
-      linear-gradient(180deg, #f8fafc, #f6f8fc 55%, #f8fafc);
+    font-family:Tahoma,Arial,sans-serif;
+    color:var(--text);
+    background: radial-gradient(1200px 600px at 20% 10%, #dbeafe 0%, transparent 55%),
+                radial-gradient(900px 500px at 80% 0%, #e0f2fe 0%, transparent 55%),
+                linear-gradient(180deg, var(--bg2), var(--bg1));
+    min-height:100vh;
   }
-
-  .wrap{max-width:1120px;margin:26px auto;padding:0 16px}
-
-  /* Header */
-  .header{
-    display:flex;align-items:center;justify-content:space-between;gap:14px;
-    padding:16px 18px;
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.72));
+  .wrap{
+    max-width:1180px;
+    margin:26px auto;
+    padding:0 14px;
+  }
+  .topbar{
+    background:var(--card);
+    backdrop-filter: blur(10px);
+    border:1px solid #ffffff80;
     box-shadow:var(--shadow);
+    border-radius:22px;
+    padding:18px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
   }
   .brand{
-    display:flex;align-items:center;gap:12px;
-    min-width:0;
+    display:flex;
+    gap:12px;
+    align-items:center;
   }
-  .logoBox{
-    width:56px;height:56px;border-radius:16px;
-    background:linear-gradient(135deg, rgba(37,99,235,.10), rgba(96,165,250,.08));
-    border:1px solid var(--line);
-    display:flex;align-items:center;justify-content:center;
-    overflow:hidden;
-    flex:0 0 auto;
-  }
-  .logoBox img{
-    width:46px;height:46px;object-fit:contain;
-  }
-  .title{
-    display:flex;flex-direction:column;gap:2px;
-    min-width:0;
+  .logo{
+    width:56px;height:56px;
+    border-radius:16px;
+    background:linear-gradient(135deg,#e0f2fe,#dbeafe);
+    border:1px solid #ffffff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    color:#0b3ea8;
   }
   .title h1{
     margin:0;
-    font-size:16px;
-    font-weight:800;
+    font-size:22px;
     letter-spacing:.2px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
   }
   .title .sub{
-    margin:0;
-    font-size:12px;
-    color:var(--muted);
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-
-  .chips{
-    display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;
-  }
-  .chip{
-    font-size:12px;
-    padding:8px 10px;
-    border-radius:999px;
-    background:rgba(37,99,235,.06);
-    border:1px solid rgba(37,99,235,.14);
-    color:#0b2a63;
-    white-space:nowrap;
-  }
-  .chip strong{color:#0f172a}
-
-  /* Tabs */
-  .tabs{
-    margin-top:14px;
-    display:flex;gap:10px;flex-wrap:wrap;
-  }
-  .tab{
-    padding:10px 14px;border-radius:999px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.75);
-    color:var(--txt);
-    cursor:pointer;
-    transition:.18s ease;
+    margin-top:4px;
     font-size:13px;
-    box-shadow:0 6px 16px rgba(15,23,42,.06);
+    color:var(--muted);
   }
-  .tab:hover{transform:translateY(-1px);border-color:rgba(37,99,235,.25)}
-  .tab.active{
-    background:linear-gradient(135deg, rgba(37,99,235,1), rgba(96,165,250,.85));
-    border-color:rgba(37,99,235,.18);
-    color:#fff;
-    font-weight:800;
-  }
-
-  /* Panels */
-  .panel{
-    margin-top:14px;
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.74));
-    box-shadow:var(--shadow);
-    padding:16px;
-    display:none;
-  }
-  .panel.active{display:block}
-
-  /* Search */
-  .search{
-    display:grid;grid-template-columns:1fr auto;gap:10px;
-    margin-bottom:12px;
-  }
-  .input{
-    width:100%;
-    padding:12px 14px;
-    border-radius:14px;
-    border:1px solid var(--line);
-    background:#fff;
-    color:var(--txt);
-    outline:none;
-    transition:.15s ease;
-    font-size:14px;
-  }
-  .input:focus{
-    border-color:rgba(37,99,235,.35);
-    box-shadow:0 0 0 4px rgba(37,99,235,.12);
-  }
-  .btn{
-    padding:12px 14px;
-    border-radius:14px;
-    border:1px solid rgba(37,99,235,.15);
-    background:linear-gradient(135deg, rgba(37,99,235,1), rgba(96,165,250,.9));
-    color:#fff;
-    cursor:pointer;
-    font-weight:900;
-    transition:.15s ease;
-    font-size:14px;
-    white-space:nowrap;
-    box-shadow:0 10px 20px rgba(37,99,235,.18);
-  }
-  .btn:hover{transform:translateY(-1px);filter:saturate(1.05)}
-  .btn.secondary{
-    background:#fff;
-    color:#0f172a;
-    border:1px solid var(--line);
-    font-weight:800;
-    box-shadow:0 10px 20px rgba(15,23,42,.06);
-  }
-  .btn.danger{
-    background:linear-gradient(135deg, rgba(220,38,38,1), rgba(248,113,113,.9));
-    border-color:rgba(220,38,38,.15);
-    box-shadow:0 10px 20px rgba(220,38,38,.14);
-  }
-
-  /* Info card */
-  .infoCard{
-    padding:14px;border-radius:16px;
-    border:1px solid var(--line);
-    background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(250,252,255,.95));
-  }
-  .infoGrid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
+  .pills{
+    display:flex;
     gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-start;
   }
-  .kv{
-    padding:10px 12px;
-    border:1px solid var(--line);
-    border-radius:14px;
-    background:rgba(37,99,235,.03);
-  }
-  .k{font-size:12px;color:var(--muted)}
-  .v{font-size:14px;font-weight:900;margin-top:3px}
-
-  @media(max-width:700px){
-    .infoGrid{grid-template-columns:1fr}
-    .search{grid-template-columns:1fr}
-    .chips{display:none}
-  }
-
-  /* Table */
-  .tableWrap{
-    margin-top:12px;
-    overflow:auto;
-    border-radius:16px;
-    border:1px solid var(--line);
-    background:#fff;
-  }
-  table{width:100%;border-collapse:collapse;min-width:860px}
-  th,td{padding:12px;border-bottom:1px solid var(--line);text-align:center;vertical-align:top}
-  th{
-    position:sticky;top:0;
-    background:#fbfcff;
-    z-index:2;
-    font-size:12px;
-    color:var(--muted);
-  }
-  td{font-size:13px}
-  .day{
-    text-align:right;
-    font-weight:900;
-    color:var(--txt);
-    white-space:nowrap;
-    background:rgba(37,99,235,.03);
-  }
-  .slot{text-align:right;border-left:1px solid var(--line)}
-  .course{
-    padding:10px 10px;
-    border-radius:14px;
-    border:1px solid var(--line);
-    background:#fff;
-    margin:6px 0;
-    box-shadow:0 10px 18px rgba(15,23,42,.06);
-  }
-  .course .name{font-weight:900;color:var(--txt);font-size:13px}
-  .course .meta{color:var(--muted);font-size:12px;margin-top:4px}
-
-  .tag{
-    display:inline-block;
-    padding:4px 8px;border-radius:999px;
-    border:1px solid var(--line);
-    background:#f8fafc;
-    color:var(--muted);
-    font-size:11px;
-    margin-top:6px;
-    font-weight:800;
-  }
-  .tag.ok{color:#064e2b;background:rgba(22,163,74,.10);border-color:rgba(22,163,74,.20)}
-  .tag.warn{color:#78350f;background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.25)}
-  .tag.danger{color:#7f1d1d;background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.22)}
-
-  .cellForbidden{background:rgba(220,38,38,.06)}
-  .conflictBox{
-    margin-top:8px;
-    padding:10px 12px;
-    border-radius:14px;
-    border:1px solid rgba(220,38,38,.25);
-    background:rgba(220,38,38,.08);
-    color:#7f1d1d;
-    font-size:12px;
-    font-weight:900;
-    text-align:right;
-  }
-  .denyBox{
-    margin-top:8px;
-    padding:10px 12px;
-    border-radius:14px;
-    border:1px solid rgba(220,38,38,.25);
-    background:rgba(220,38,38,.10);
-    color:#7f1d1d;
-    font-size:12px;
-    font-weight:900;
-    text-align:right;
-  }
-  .note{
-    font-size:12px;color:var(--muted);text-align:center;margin-top:10px
-  }
-
-  /* Admin */
-  .adminGrid{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:12px;
-    margin-top:10px;
-  }
-  @media(max-width:900px){
-    .adminGrid{grid-template-columns:1fr}
-  }
-  .card{
-    border:1px solid var(--line);
-    border-radius:16px;
-    background:#fff;
-    padding:14px;
-    box-shadow:0 12px 22px rgba(15,23,42,.06);
-  }
-  .card h3{margin:0 0 10px;font-size:13px;color:var(--txt);font-weight:900}
-  .statLine{font-size:12px;color:var(--muted);line-height:1.8}
   .pill{
-    display:inline-block;
-    padding:2px 8px;border-radius:999px;
-    border:1px solid var(--line);
-    background:#f8fafc;
-    color:var(--txt);
-    font-weight:900;
+    border:1px solid var(--border);
+    background:#fff;
+    padding:8px 12px;
+    border-radius:999px;
+    font-size:13px;
+    color:#1f2937;
   }
-  .logsWrap{margin-top:12px}
 
-  /* Toast */
-  .toast{
-    position:fixed;bottom:18px;left:18px;right:18px;
-    max-width:1120px;margin:0 auto;
-    padding:12px 14px;border-radius:14px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.92);
+  .card{
+    margin-top:18px;
+    background:var(--card);
+    border:1px solid #ffffff80;
     backdrop-filter: blur(10px);
-    color:var(--txt);
-    display:none;
-    box-shadow:0 12px 30px rgba(15,23,42,.16);
+    box-shadow:var(--shadow);
+    border-radius:var(--radius);
+    padding:18px;
+  }
+
+  .row{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  input{
+    width:min(720px, 92vw);
+    padding:14px 14px;
+    border-radius:16px;
+    border:1px solid var(--border);
+    font-size:16px;
+    outline:none;
+  }
+  input:focus{ border-color:#93c5fd; box-shadow:0 0 0 4px rgba(59,130,246,.12); }
+  .btn{
+    padding:12px 16px;
+    border-radius:14px;
+    border:none;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:700;
+    background:var(--primary);
+    color:#fff;
+  }
+  .btn:hover{ background:var(--primary2); }
+  .hint{
+    text-align:center;
+    margin-top:10px;
+    color:var(--muted);
     font-size:13px;
   }
-  .toast.show{display:block}
-  .toast strong{color:var(--txt)}
+
+  .info{
+    margin-top:14px;
+    background:linear-gradient(180deg,#eff6ff,#ffffff);
+    border:1px solid #dbeafe;
+    padding:14px;
+    border-radius:16px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    justify-content:space-between;
+  }
+  .info .box{
+    flex:1;
+    min-width:240px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:12px;
+  }
+  .info .label{ font-size:12px; color:var(--muted); }
+  .info .value{ font-size:18px; font-weight:800; margin-top:6px; }
+
+  table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    margin-top:14px;
+    overflow:hidden;
+    border-radius:16px;
+    border:1px solid var(--border);
+    background:#fff;
+  }
+  th,td{
+    padding:12px 10px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+    vertical-align:top;
+    font-size:14px;
+  }
+  th{
+    background:#f8fafc;
+    font-weight:800;
+  }
+  tr:last-child td{ border-bottom:none; }
+  td.day{
+    font-weight:800;
+    background:#f8fafc;
+    width:160px;
+  }
+  .slot{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    align-items:center;
+  }
+  .course{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:10px 10px;
+    background:#fff;
+  }
+  .course .name{ font-weight:800; }
+  .course .status{ font-size:12px; color:var(--muted); margin-top:4px; }
+  .forbidden{
+    border-color:#fecaca;
+    background:#fff1f2;
+  }
+  .forbidden .status{ color:#991b1b; font-weight:800; }
+  .conflictNote{
+    margin-top:8px;
+    font-size:12px;
+    font-weight:900;
+    color:#b91c1c;
+  }
+  .nodata{
+    margin-top:14px;
+    background:#fff1f2;
+    border:1px solid #fecaca;
+    color:#991b1b;
+    padding:12px;
+    border-radius:14px;
+    text-align:center;
+    font-weight:800;
+    white-space:pre-line;
+  }
+  .footer{
+    text-align:center;
+    margin:18px 0 8px;
+    color:var(--muted);
+    font-size:12px;
+  }
 </style>
 </head>
-
 <body>
-<div class="wrap">
-
-  <div class="header">
-    <div class="brand">
-      <div class="logoBox">
-        <!-- ضع ملف الشعار داخل الريبو باسم tvtc-logo.png -->
-        <img src="tvtc-logo.png" alt="شعار المؤسسة العامة للتدريب التقني والمهني"
-             onerror="this.style.display='none';" />
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">TVTC</div>
+        <div class="title">
+          <h1>بوابة الاستعلام عن جدول الاختبارات</h1>
+          <div class="sub">الكلية التقنية بالفرشة — بيانات من Google Sheets عبر Apps Script</div>
+        </div>
       </div>
-      <div class="title">
-        <h1 id="headerTitle">بوابة الاستعلام عن جدول الاختبارات</h1>
-        <p class="sub" id="headerSub"></p>
+      <div class="pills">
+        <div class="pill">المؤسسة: TVTC</div>
+        <div class="pill">التشغيل: GitHub Pages</div>
       </div>
     </div>
 
-    <div class="chips">
-      <div class="chip">المؤسسة: <strong>TVTC</strong></div>
-      <div class="chip">البيانات: <strong>مستورده من منصة رايات</strong></div>
-      <div class="chip">التشغيل: <strong>Thakir Alqasem</strong></div>
+    <div class="card">
+      <div class="row">
+        <input id="traineeId" placeholder="أدخل الرقم التدريبي" inputmode="numeric" />
+        <button class="btn" onclick="searchTrainee()">بحث</button>
+      </div>
+      <div class="hint">ملاحظة: إذا كانت حالة المقرر (حرمان/مطوي قيده) سيظهر تنبيه بعدم دخول الاختبار.</div>
+
+      <div id="studentResult"></div>
+
+      <div class="footer">إذا واجهت عدم ظهور نتيجة، حدّث الصفحة (Ctrl+F5) بعد تحديث Deploy في Apps Script.</div>
     </div>
   </div>
-
-  <div class="tabs">
-    <button id="tabStudent" class="tab active" onclick="setTab('student')">وضع المتدرب</button>
-    <button id="tabAdmin" class="tab" onclick="setTab('admin')">لوحة تحكم المدير</button>
-  </div>
-
-  <!-- ================= Student ================= -->
-  <section id="panelStudent" class="panel active">
-    <div class="search">
-      <input class="input" id="traineeId" placeholder="أدخل الرقم التدريبي ثم اضغط بحث" inputmode="numeric" />
-      <button class="btn" onclick="searchTrainee()">بحث</button>
-    </div>
-    <div id="studentResult"></div>
-    <div class="note">في حال وجود تعارض (مادتين بنفس الفترة) سيظهر تنبيه واضح باللون الأحمر.</div>
-  </section>
-
-  <!-- ================= Admin ================= -->
-  <section id="panelAdmin" class="panel">
-    <div id="adminLogin">
-      <div class="search" style="grid-template-columns:1fr auto;">
-        <input class="input" type="password" id="adminPass" placeholder="كلمة مرور المدير" />
-        <button class="btn" onclick="adminLogin()">دخول</button>
-      </div>
-      <div class="note">* كلمة المرور محلية داخل الصفحة. يفضّل تغييرها قبل مشاركة الرابط.</div>
-    </div>
-
-    <div id="adminArea" style="display:none">
-      <div class="adminGrid">
-
-        <div class="card">
-          <h3>اختبار الاتصال</h3>
-          <button class="btn" onclick="testAPI()">اختبار API</button>
-          <div id="apiStatus" class="statLine" style="margin-top:10px"></div>
-        </div>
-
-        <div class="card">
-          <h3>إحصائيات السجلات</h3>
-          <div id="statsBox" class="statLine">اضغط “تحديث السجلات” لعرض الإحصائيات.</div>
-        </div>
-
-        <div class="card">
-          <h3>تحديث السجلات</h3>
-          <div class="search" style="grid-template-columns:1fr auto;">
-            <input class="input" id="logLimit" value="50" />
-            <button class="btn secondary" onclick="loadLogs()">تحديث</button>
-          </div>
-          <div class="statLine">حد أقصى: 200 سجل — الأحدث يظهر أولاً.</div>
-        </div>
-
-        <div class="card">
-          <h3>إدارة الجلسة</h3>
-          <button class="btn danger" onclick="adminLogout()">تسجيل خروج</button>
-          <div class="statLine" style="margin-top:10px">
-            السجلات تحفظ في ورقة <span class="pill">API_LOGS</span> داخل ملف الشيت.
-          </div>
-        </div>
-
-      </div>
-
-      <div class="logsWrap" id="logsArea"></div>
-    </div>
-  </section>
-
-  <div class="note" style="margin-top:14px">
-    البيانات تُجلب من منصة رايات ويجب على المتدرب المقارنة بين المقررات الظهره هنا ومقررات جدوله التدريبي.
-  </div>
-
-</div>
-
-<div id="toast" class="toast"></div>
 
 <script>
-/* ================== إعدادات ================== */
-var API_URL   = "https://script.google.com/macros/s/AKfycbwXBBqk55pwYg4D7cCu0yXfX9kc2hvGMrmxmsszYGVpFPonq9NI9WLTTlDtL8k9r0oYvQ/exec";
-var API_TOKEN = "SECRET_TOKEN_1447H";
-var ADMIN_PASSWORD = "admin@1447";
-
-/* اسم الكلية في الهيدر (عدّل كما تريد) */
-var COLLEGE_NAME = "المعهد الصناعي الثانوي وفرع الكلية التقنية بالفرشة";
-
-/* ================== UI Helpers ================== */
-document.getElementById("headerSub").innerText = " — " + COLLEGE_NAME;
-
-function setTab(tab){
-  document.getElementById("tabStudent").classList.toggle("active", tab==="student");
-  document.getElementById("tabAdmin").classList.toggle("active", tab==="admin");
-  document.getElementById("panelStudent").classList.toggle("active", tab==="student");
-  document.getElementById("panelAdmin").classList.toggle("active", tab==="admin");
-}
+const API_URL = "https://script.google.com/macros/s/AKfycbwXBBqk55pwYg4D7cCu0yXfX9kc2hvGMrmxmsszYGVpFPonq9NI9WLTTlDtL8k9r0oYvQ/exec";
 
 function esc(s){
-  s = (s === null || s === undefined) ? "" : String(s);
-  return s.replace(/[&<>"']/g, function(m){
-    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
-  });
+  return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-function toast(msg, ms){
-  var el = document.getElementById("toast");
-  el.innerHTML = msg;
-  el.classList.add("show");
-  setTimeout(function(){ el.classList.remove("show"); }, ms || 2600);
-}
-
-/* ================== JSONP ================== */
 function jsonp(url){
-  return new Promise(function(resolve, reject){
-    var cbName = "cb_" + Math.random().toString(36).slice(2);
-    var script = document.createElement("script");
-    var timeout = setTimeout(function(){
-      cleanup();
-      reject(new Error("JSONP timeout"));
-    }, 15000);
+  return new Promise((resolve, reject) => {
+    const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random()*100000);
+    const script = document.createElement("script");
+    const sep = url.includes("?") ? "&" : "?";
 
-    function cleanup(){
-      clearTimeout(timeout);
-      try { delete window[cbName]; } catch(e){ window[cbName] = undefined; }
-      if(script && script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    window[cbName] = function(data){
-      cleanup();
-      resolve(data);
+    window[cb] = (data) => {
+      try { resolve(data); }
+      finally {
+        delete window[cb];
+        script.remove();
+      }
     };
 
-    script.onerror = function(){
-      cleanup();
-      reject(new Error("JSONP script error"));
+    script.onerror = () => {
+      delete window[cb];
+      script.remove();
+      reject(new Error("JSONP failed"));
     };
 
-    var join = (url.indexOf("?") >= 0) ? "&" : "?";
-    script.src = url + join + "callback=" + encodeURIComponent(cbName);
+    script.src = url + sep + "callback=" + encodeURIComponent(cb);
     document.body.appendChild(script);
   });
 }
 
-function callSchedule(id){
-  var url = API_URL + "?id=" + encodeURIComponent(id) + "&token=" + encodeURIComponent(API_TOKEN);
-  return jsonp(url);
-}
-
-function callLogs(limit){
-  var url = API_URL + "?action=logs&limit=" + encodeURIComponent(limit) + "&token=" + encodeURIComponent(API_TOKEN);
-  return jsonp(url);
-}
-
-/* ================== Student ================== */
 async function searchTrainee(){
-  var id = document.getElementById("traineeId").value.trim();
-  var box = document.getElementById("studentResult");
-  box.innerHTML = '<div class="note">جاري البحث…</div>';
+  const id = document.getElementById("traineeId").value.trim();
+  const box = document.getElementById("studentResult");
+  box.innerHTML = "جاري البحث...";
 
   if(!id){
-    box.innerHTML = '<div class="infoCard"><div class="denyBox">من فضلك أدخل الرقم التدريبي.</div></div>';
+    box.innerHTML = `<div class="nodata">من فضلك أدخل الرقم التدريبي</div>`;
     return;
   }
 
   try{
-    var data = await callSchedule(id);
-    if(!data.ok){
-      box.innerHTML = '<div class="infoCard"><div class="denyBox">' + esc(data.message) + '</div></div>';
-      toast('لم يتم العثور على بيانات', 2200);
+    const data = await jsonp(`${API_URL}?id=${encodeURIComponent(id)}`);
+
+    if(!data || !data.ok){
+      box.innerHTML = `<div class="nodata">${esc((data && data.message) || "لا توجد بيانات")}</div>`;
       return;
     }
-    box.innerHTML = renderSchedule(data);
-    toast('تم جلب البيانات بنجاح', 1600);
+
+    box.innerHTML = renderScheduleTable(data);
+
   }catch(err){
-    box.innerHTML = '<div class="infoCard"><div class="denyBox">فشل الاتصال. تأكد من Deploy → Update في Apps Script.</div></div>';
+    box.innerHTML = `<div class="nodata">
+فشل الاتصال بالخادم.
+- تأكد أن رابط API_URL صحيح (exec)
+- تأكد Deploy: Who has access = Anyone
+- حدّث الصفحة Ctrl+F5
+</div>`;
   }
 }
 
-function renderSchedule(data){
-  var info = ''
-    + '<div class="infoCard">'
-    +   '<div class="infoGrid">'
-    +     '<div class="kv"><div class="k">اسم المتدرب</div><div class="v">' + esc(data.traineeName) + '</div></div>'
-    +     '<div class="kv"><div class="k">الرقم التدريبي</div><div class="v">' + esc(data.traineeId) + '</div></div>'
-    +   '</div>'
-    + '</div>';
+function renderScheduleTable(data){
+  const days = Array.isArray(data.days) ? data.days : [];
 
-  var html = info;
+  let html = `
+    <div class="info">
+      <div class="box">
+        <div class="label">اسم المتدرب</div>
+        <div class="value">${esc(data.traineeName)}</div>
+      </div>
+      <div class="box">
+        <div class="label">الرقم التدريبي</div>
+        <div class="value">${esc(data.traineeId)}</div>
+      </div>
+    </div>
+  `;
 
-  var days = (data.days && data.days.length) ? data.days : [];
   if(days.length === 0){
-    html += '<div class="infoCard"><div class="denyBox">لا يوجد جدول اختبارات لهذا المتدرب.</div></div>';
+    html += `<div class="nodata">لا يوجد جدول اختبارات لهذا المتدرب.</div>`;
     return html;
   }
 
-  html += '<div class="tableWrap"><table>'
-       +  '<thead><tr>'
-       +    '<th style="text-align:right">اليوم</th>'
-       +    '<th>الفترة الأولى<span class="time">8:30 → 10:00</span></th>'
-       +    '<th>الفترة الثانية<span class="time">10:30 → 12:00</span></th>'
-       +    '<th>الفترة الثالثة<span class="time">12:00 → 1:30</span></th>'
-       +  '</tr></thead><tbody>';
+  html += `
+    <table>
+      <thead>
+        <tr>
+          <th>اليوم</th>
+          <th>الفترة الأولى <div style="font-size:12px;color:#64748b;margin-top:4px;">8:30 إلى 10:00</div></th>
+          <th>الفترة الثانية <div style="font-size:12px;color:#64748b;margin-top:4px;">10:30 إلى 12:00</div></th>
+          <th>الفترة الثالثة <div style="font-size:12px;color:#64748b;margin-top:4px;">12:00 إلى 12:30</div></th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
 
-  for(var di=0; di<days.length; di++){
-    var d = days[di];
-    html += '<tr>'
-         +    '<td class="day">' + esc(d.dayLabel) + '</td>';
+  days.forEach(d=>{
+    html += `<tr>`;
+    html += `<td class="day">${esc(d.dayLabel)}</td>`;
 
-    for(var p=1; p<=3; p++){
-      var slot = (d.periods && d.periods[p]) ? d.periods[p] : [];
-      if(!slot || slot.length === 0){
-        html += '<td class="slot" style="text-align:center;color:rgba(100,116,139,.9)">—</td>';
-        continue;
+    [1,2,3].forEach(p=>{
+      const slot = (d.periods && d.periods[p]) ? d.periods[p] : [];
+      if(!slot.length){
+        html += `<td>-</td>`;
+        return;
       }
 
-      var hasConflict = slot.length > 1;
-      var anyForbidden = false;
-      for(var si=0; si<slot.length; si++){
-        if(slot[si] && slot[si].forbidden){ anyForbidden = true; break; }
-      }
+      const hasConflict = slot.length > 1;
+      html += `<td><div class="slot">`;
 
-      html += '<td class="slot ' + (anyForbidden ? 'cellForbidden' : '') + '">';
-
-      for(var i=0; i<slot.length; i++){
-        var c = slot[i];
-        var badge = '<span class="tag ok">مسموح</span>';
-        if(c.forbidden) badge = '<span class="tag danger">لا يمكن دخول الاختبار</span>';
-        else if(hasConflict && i>0) badge = '<span class="tag warn">مادة أخرى بنفس الوقت</span>';
-
-        html += '<div class="course">'
-             +   '<div class="name">' + esc(c.courseName) + '</div>'
-             +   '<div class="meta">(' + esc(c.courseRef) + ') — ' + esc(c.status) + '</div>'
-             +   badge
-             + '</div>';
-      }
+      slot.forEach((c, idx)=>{
+        const forbidden = !!c.forbidden;
+        html += `
+          <div class="course ${forbidden ? 'forbidden':''}">
+            <div class="name">${esc(c.courseName)}</div>
+            <div class="status">${esc(c.status || '')}${forbidden ? ' — لا يمكن دخول الاختبار' : ''}</div>
+          </div>
+        `;
+      });
 
       if(hasConflict){
-        html += '<div class="conflictBox">تنبيه: لديك أكثر من مقرر في نفس الفترة — راجع رئيس القسم لتعديل التعارض.</div>';
-      }
-      if(anyForbidden){
-        html += '<div class="denyBox">ملاحظة: يوجد مقرر حالته (حرمان/مطوي قيده) — لا يمكن دخول الاختبار لهذا المقرر.</div>';
+        html += `<div class="conflictNote">تنبيه: لديك أكثر من مقرر في نفس الفترة.</div>`;
       }
 
-      html += '</td>';
-    }
+      html += `</div></td>`;
+    });
 
-    html += '</tr>';
-  }
+    html += `</tr>`;
+  });
 
-  html += '</tbody></table></div>';
+  html += `</tbody></table>`;
   return html;
 }
 
-/* ================== Admin ================== */
-function adminLogin(){
-  var pass = document.getElementById("adminPass").value;
-  if(pass !== ADMIN_PASSWORD){
-    toast('كلمة المرور غير صحيحة', 2400);
-    return;
-  }
-  document.getElementById("adminLogin").style.display = "none";
-  document.getElementById("adminArea").style.display = "block";
-  document.getElementById("logsArea").innerHTML = '<div class="note">جاهز. اضغط “تحديث السجلات”.</div>';
-  toast('تم الدخول للوحة المدير', 1600);
-}
-
-function adminLogout(){
-  document.getElementById("adminPass").value = "";
-  document.getElementById("adminLogin").style.display = "block";
-  document.getElementById("adminArea").style.display = "none";
-  document.getElementById("apiStatus").innerText = "";
-  document.getElementById("statsBox").innerText = "اضغط “تحديث السجلات” لعرض الإحصائيات.";
-  document.getElementById("logsArea").innerHTML = "";
-  toast('تم تسجيل الخروج', 1600);
-}
-
-async function testAPI(){
-  var box = document.getElementById("apiStatus");
-  box.innerHTML = 'جاري الاختبار…';
-  try{
-    var data = await callLogs(1);
-    if(data && data.ok){
-      box.innerHTML = '✅ الاتصال يعمل + الصلاحيات سليمة';
-      toast('API يعمل', 1600);
-    } else {
-      box.innerHTML = '❌ فشل: ' + esc(data.message || "Unknown");
-    }
-  }catch(err){
-    box.innerHTML = '❌ فشل الاتصال';
-  }
-}
-
-async function loadLogs(){
-  var area = document.getElementById("logsArea");
-  var statsBox = document.getElementById("statsBox");
-
-  var limit = parseInt(document.getElementById("logLimit").value, 10);
-  if(isNaN(limit) || limit < 1) limit = 50;
-  if(limit > 200) limit = 200;
-
-  area.innerHTML = '<div class="note">جاري تحميل السجلات…</div>';
-
-  try{
-    var data = await callLogs(limit);
-    if(!data.ok){
-      area.innerHTML = '<div class="infoCard"><div class="denyBox">' + esc(data.message || "فشل تحميل السجلات") + '</div></div>';
-      return;
-    }
-
-    if(data.stats){
-      statsBox.innerHTML =
-        'إجمالي السجلات: <span class="pill">' + esc(data.stats.total) + '</span><br>' +
-        'OK: <span class="pill">' + esc(data.stats.ok) + '</span> — NOT_FOUND: <span class="pill">' + esc(data.stats.notFound) + '</span><br>' +
-        'DENY_ORIGIN: <span class="pill">' + esc(data.stats.denyOrigin) + '</span> — DENY_TOKEN: <span class="pill">' + esc(data.stats.denyToken) + '</span><br>' +
-        'DENY_RATE: <span class="pill">' + esc(data.stats.denyRate) + '</span> — BAD_REQUEST: <span class="pill">' + esc(data.stats.badRequest) + '</span>';
-    } else {
-      statsBox.innerText = "لا توجد إحصائيات";
-    }
-
-    var headers = data.headers || [];
-    var rows = data.rows || [];
-
-    if(rows.length === 0){
-      area.innerHTML = '<div class="infoCard"><div class="denyBox">لا توجد سجلات.</div></div>';
-      return;
-    }
-
-    var html = '<div class="tableWrap"><table><thead><tr>';
-    for(var i=0; i<headers.length; i++){
-      html += '<th>' + esc(headers[i]) + '</th>';
-    }
-    html += '</tr></thead><tbody>';
-
-    for(var r=rows.length-1; r>=0; r--){
-      html += '<tr>';
-      for(var c=0; c<headers.length; c++){
-        html += '<td style="font-size:12px;color:#0f172a">' + esc(rows[r][c]) + '</td>';
-      }
-      html += '</tr>';
-    }
-
-    html += '</tbody></table></div>';
-    area.innerHTML = html;
-
-    toast('تم تحديث السجلات', 1600);
-  }catch(err){
-    area.innerHTML = '<div class="infoCard"><div class="denyBox">فشل تحميل السجلات. تأكد من Deploy → Update في Apps Script.</div></div>';
-  }
-}
-
-/* Enter للبحث */
+// Enter = بحث
 document.getElementById("traineeId").addEventListener("keyup", function(e){
   if(e.key === "Enter") searchTrainee();
 });
 </script>
-
 </body>
 </html>
