@@ -1,324 +1,238 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta charset="UTF-8">
 <title>بوابة الاستعلام عن جدول الاختبارات</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-  :root{
-    --bg:#eef4ff;
-    --card:#ffffff;
-    --stroke:#e5e7eb;
-    --text:#111827;
-    --muted:#6b7280;
+body{
+  font-family: Tahoma, Arial;
+  background:#eef3fb;
+  margin:0;
+  padding:0;
+  color:#1f2937;
+}
 
-    /* تظليل الفترات */
-    --p1:#eff6ff;   /* أزرق فاتح */
-    --p2:#f0fdf4;   /* أخضر فاتح */
+.container{
+  max-width:1100px;
+  margin:30px auto;
+  padding:20px;
+}
 
-    --primary:#2563eb;
-    --danger:#dc2626;
-  }
+/* ===== Header ===== */
+.header{
+  background:#ffffff;
+  padding:20px 25px;
+  border-radius:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
 
-  body{font-family:Tahoma,Arial;background:var(--bg);margin:0;color:var(--text)}
-  .container{
-    max-width:1200px;
-    margin:26px auto;
-    background:var(--card);
-    padding:22px;
-    border-radius:18px;
-    box-shadow:0 10px 25px rgba(0,0,0,.07)
-  }
+.header h1{
+  margin:0;
+  font-size:26px;
+}
 
-  /* Header */
-  .header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:14px;
-    padding:12px 4px 18px;
-  }
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    min-width:240px;
-  }
-  .logo{
-    width:54px;height:54px;
-    border-radius:14px;
-    background:#f1f5f9;
-    border:1px solid var(--stroke);
-    display:flex;align-items:center;justify-content:center;
-    overflow:hidden;
-  }
-  .brandText .t1{font-weight:900;font-size:16px}
-  .brandText .t2{color:var(--muted);font-size:12px;margin-top:2px}
-  .titleBox{
-    flex:1;
-    text-align:center;
-  }
-  .titleBox h1{margin:0;font-size:30px}
-  .titleBox .sub{margin-top:6px;color:var(--muted);font-size:13px}
+.header small{
+  display:block;
+  color:#6b7280;
+  margin-top:6px;
+}
 
-  /* Search */
-  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:12px 0}
-  input,button{padding:12px 14px;border-radius:12px;border:1px solid var(--stroke);font-size:15px}
-  input{min-width:320px;max-width:620px;width:70%}
-  button.primary{background:var(--primary);color:#fff;border:none;cursor:pointer}
-  button.primary:hover{opacity:.92}
+.badges span{
+  background:#eef2ff;
+  color:#1d4ed8;
+  padding:8px 14px;
+  border-radius:20px;
+  margin-left:6px;
+  font-size:14px;
+}
 
-  /* info cards */
-  .info{background:#f8fafc;padding:12px 14px;border-radius:14px;border:1px solid var(--stroke);margin-top:12px}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-  .infoBox{background:#fff;border:1px solid var(--stroke);border-radius:14px;padding:12px 14px}
-  .infoLabel{color:var(--muted);font-size:12px;margin-bottom:4px}
-  .infoValue{font-weight:900;font-size:18px}
+/* ===== Card ===== */
+.card{
+  background:#ffffff;
+  margin-top:25px;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 10px 35px rgba(0,0,0,.08);
+}
 
-  .no-data{
-    background:#fef2f2;color:#991b1b;
-    padding:12px 14px;border-radius:14px;
-    border:1px solid #fecaca;margin-top:12px;
-    white-space:pre-line;text-align:center;
-    font-weight:800;
-  }
+/* ===== Search ===== */
+.search-box{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
+}
 
-  /* Table */
-  table{
-    width:100%;
-    border-collapse:separate;
-    border-spacing:0;
-    margin-top:14px;
-    font-size:14px;
-    border:1px solid var(--stroke);
-    border-radius:16px;
-    overflow:hidden
-  }
-  th,td{
-    border-bottom:1px solid var(--stroke);
-    border-left:1px solid var(--stroke);
-    padding:12px;
-    text-align:center;
-    vertical-align:top
-  }
-  tr:last-child td{border-bottom:none}
-  th:last-child, td:last-child{border-left:none}
-  th{
-    background:#f9fafb;
-    font-weight:900
-  }
-  .time{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+.search-box input{
+  flex:1;
+  padding:14px;
+  font-size:18px;
+  border-radius:12px;
+  border:2px solid #dbeafe;
+}
 
-  /* period shading */
-  th.p1, td.p1{background:var(--p1)}
-  th.p2, td.p2{background:var(--p2)}
+.search-box button{
+  padding:14px 22px;
+  font-size:18px;
+  border:none;
+  border-radius:12px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+}
 
-  /* outer frame for each period */
-  td.p1, td.p2{position:relative}
-  td.p1::after, td.p2::after{
-    content:"";
-    position:absolute;
-    inset:6px;
-    border:1px dashed rgba(0,0,0,.15);
-    border-radius:14px;
-    pointer-events:none;
-  }
+/* ===== Info ===== */
+.info{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-top:20px;
+}
 
-  /* course card inside cell - smaller */
-  .courseCard{
-    background:#ffffffcc;
-    border:1px solid rgba(0,0,0,.12);
-    border-radius:12px;
-    padding:8px 10px;
-    margin:6px auto;
-    max-width:230px;
-    text-align:right;
-    box-shadow:0 4px 12px rgba(0,0,0,.04);
-  }
-  .courseTitle{font-weight:900;font-size:13px;margin-bottom:4px}
-  .courseMeta{color:var(--muted);font-size:12px;line-height:1.45}
+.info div{
+  background:#f8fafc;
+  padding:18px;
+  border-radius:14px;
+  text-align:center;
+  border:1px solid #e5e7eb;
+}
 
-  .courseCard.forbidden{
-    border-color:#fecaca;
-    background:#fff1f2;
-  }
+/* ===== Table ===== */
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin-top:25px;
+}
 
-  .warn{
-    margin-top:8px;
-    font-weight:900;
-    color:#b91c1c;
-    font-size:12px;
-    text-align:center;
-  }
+thead th{
+  background:#f1f5f9;
+  padding:14px;
+  font-size:16px;
+}
 
-  .noExamDay{
-    color:#6b7280;
-    font-weight:900;
-    font-size:13px;
-    padding:18px 8px;
-  }
+tbody td{
+  padding:14px;
+  border-top:1px solid #e5e7eb;
+  text-align:center;
+}
 
-  .footer{color:var(--muted);font-size:12px;text-align:center;margin-top:16px}
+.period1{background:#ecfeff;}
+.period2{background:#fef3c7;}
+
+.no-exam{
+  background:#fee2e2;
+  color:#991b1b;
+  font-weight:bold;
+}
+
+.footer-note{
+  margin-top:15px;
+  font-size:14px;
+  color:#64748b;
+}
 </style>
 </head>
 
 <body>
+
 <div class="container">
 
-  <!-- ===== Header ===== -->
+  <!-- ===== HEADER ===== -->
   <div class="header">
-    <div class="brand">
-      <div class="logo">
-        <!-- ضع شعارك هنا (اختياري): <img src="logo.png" style="width:100%;height:100%;object-fit:contain"> -->
-      </div>
-      <div class="brandText">
-        <div class="t1">TVTC</div>
-        <div class="t2">الكلية التقنية بالفرشة</div>
-      </div>
-    </div>
-
-    <div class="titleBox">
+    <div>
       <h1>بوابة الاستعلام عن جدول الاختبارات</h1>
-      <div class="sub">عرض الفترتين (الأولى والثانية) — مع تمييز اختلاف الألوان</div>
+      <small>الكلية التقنية – المؤسسة العامة للتدريب التقني والمهني</small>
+    </div>
+    <div class="badges">
+      <span>TVTC</span>
+      <span>Google Sheet</span>
+      <span>Cloudflare</span>
+    </div>
+  </div>
+
+  <!-- ===== CARD ===== -->
+  <div class="card">
+
+    <div class="search-box">
+      <input id="tid" placeholder="أدخل الرقم التدريبي">
+      <button onclick="search()">بحث</button>
     </div>
 
-    <div style="min-width:240px"></div>
-  </div>
-
-  <!-- ===== Search ===== -->
-  <div class="row">
-    <input id="traineeId" placeholder="أدخل الرقم التدريبي" />
-    <button class="primary" onclick="searchTrainee()">بحث</button>
-  </div>
-
-  <div id="studentResult"></div>
-
-  <div class="footer">البيانات تُجلب من Google Sheets عبر Netlify Function</div>
-</div>
-
-<script>
-/* ✅ ضع مسار Netlify Function */
-const API_URL = "/.netlify/functions/schedule";
-
-function esc(s){
-  return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
-async function callSchedule(id){
-  const url = `${API_URL}?id=${encodeURIComponent(id)}`;
-  const res = await fetch(url);
-  return await res.json();
-}
-
-async function searchTrainee(){
-  const id = document.getElementById("traineeId").value.trim();
-  const box = document.getElementById("studentResult");
-  box.innerHTML = "جاري البحث...";
-
-  if(!id){
-    box.innerHTML = `<div class="no-data">من فضلك أدخل الرقم التدريبي</div>`;
-    return;
-  }
-
-  try{
-    const data = await callSchedule(id);
-    if(!data.ok){
-      box.innerHTML = `<div class="no-data">${esc(data.message)}</div>`;
-      return;
-    }
-    box.innerHTML = renderScheduleTable(data);
-  }catch(err){
-    box.innerHTML = `<div class="no-data">فشل الاتصال بالخادم. تأكد أن Netlify Deploy مكتمل وأن Function تعمل.</div>`;
-  }
-}
-
-function renderCell(slot){
-  if(!slot || slot.length === 0) return "";
-
-  const hasConflict = slot.length > 1;
-  const anyForbidden = slot.some(c => !!c.forbidden);
-
-  let html = "";
-  slot.forEach((c, idx) => {
-    const isOther = hasConflict && idx > 0;
-
-    html += `
-      <div class="courseCard ${c.forbidden ? "forbidden" : ""}" style="${isOther ? "border-color:#fca5a5" : ""}">
-        <div class="courseTitle">${esc(c.courseName)}</div>
-        <div class="courseMeta">رمز المقرر: <b>${esc(c.courseRef || "")}</b></div>
-        <div class="courseMeta">الحالة: ${esc(c.status || "")}</div>
+    <div class="info" id="info" style="display:none">
+      <div>
+        <strong>اسم المتدرب</strong><br>
+        <span id="name"></span>
       </div>
-    `;
-  });
-
-  if(hasConflict){
-    html += `<div class="warn">تنبيه: لديك أكثر من مقرر في نفس الفترة — تم تمييز المقرر الآخر</div>`;
-  }
-  if(anyForbidden){
-    html += `<div class="warn">لا يمكن دخول الاختبار لأحد المقررات بسبب (حرمان/مطوي قيده)</div>`;
-  }
-
-  return html;
-}
-
-function renderScheduleTable(data){
-  const days = Array.isArray(data.days) ? data.days : [];
-
-  let html = `
-    <div class="info">
-      <div class="grid2">
-        <div class="infoBox">
-          <div class="infoLabel">اسم المتدرب</div>
-          <div class="infoValue">${esc(data.traineeName)}</div>
-        </div>
-        <div class="infoBox">
-          <div class="infoLabel">الرقم التدريبي</div>
-          <div class="infoValue">${esc(data.traineeId)}</div>
-        </div>
+      <div>
+        <strong>الرقم التدريبي</strong><br>
+        <span id="id"></span>
       </div>
     </div>
 
-    <table>
+    <table id="table" style="display:none">
       <thead>
         <tr>
           <th>اليوم</th>
-          <th class="p1">الفترة الأولى<span class="time">8:30 إلى 10:00</span></th>
-          <th class="p2">الفترة الثانية<span class="time">10:30 إلى 12:00</span></th>
+          <th>الفترة الأولى<br>8:30 – 10:00</th>
+          <th>الفترة الثانية<br>10:30 – 12:00</th>
         </tr>
       </thead>
-      <tbody>
-  `;
+      <tbody id="tbody"></tbody>
+    </table>
 
-  if(days.length === 0){
-    html += `<tr><td colspan="3">لا يوجد جدول اختبارات لهذا المتدرب.</td></tr>`;
-    html += `</tbody></table>`;
-    return html;
+    <div class="footer-note">
+      في حال عدم وجود اختبار سيظهر تنبيه واضح "لا يوجد اختبار".
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API_URL = "tvtc-exam-api.ensancom.workers.dev";
+const API_KEY = "TVTC-1447-EXAM-KEY-9X2P";
+
+async function search(){
+  const id = document.getElementById("tid").value.trim();
+  if(!id) return;
+
+  const last4 = id.slice(-4);
+
+  const res = await fetch(`${API_URL}?id=${id}&v=${last4}&key=${API_KEY}`);
+  const data = await res.json();
+
+  if(!data.ok){
+    alert(data.message || "خطأ في البيانات");
+    return;
   }
 
-  days.forEach(d=>{
-    const p1 = (d.periods && d.periods["1"]) ? d.periods["1"] : [];
-    const p2 = (d.periods && d.periods["2"]) ? d.periods["2"] : [];
+  document.getElementById("info").style.display="grid";
+  document.getElementById("table").style.display="table";
+  document.getElementById("name").textContent=data.traineeName;
+  document.getElementById("id").textContent=data.traineeId;
 
-    const hasAny = (p1.length > 0) || (p2.length > 0);
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML="";
 
-    html += `
+  data.days.forEach(d=>{
+    const p1 = d.periods["1"]?.[0]?.courseName || "لا يوجد اختبار";
+    const p2 = d.periods["2"]?.[0]?.courseName || "لا يوجد اختبار";
+
+    tbody.innerHTML += `
       <tr>
-        <td style="font-weight:900;background:#fff">${esc(d.dayLabel)}</td>
-        <td class="p1">${p1.length ? renderCell(p1) : (hasAny ? "-" : `<div class="noExamDay">لا يوجد اختبار</div>`)}</td>
-        <td class="p2">${p2.length ? renderCell(p2) : (hasAny ? "-" : `<div class="noExamDay">لا يوجد اختبار</div>`)}</td>
+        <td>${d.dayLabel}</td>
+        <td class="${p1==='لا يوجد اختبار'?'no-exam':'period1'}">${p1}</td>
+        <td class="${p2==='لا يوجد اختبار'?'no-exam':'period2'}">${p2}</td>
       </tr>
     `;
   });
-
-  html += `</tbody></table>`;
-  return html;
 }
-
-// Enter للبحث
-document.getElementById("traineeId").addEventListener("keyup", function(e){
-  if(e.key === "Enter") searchTrainee();
-});
 </script>
+
 </body>
 </html>
